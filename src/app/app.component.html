@@ -8,6 +8,14 @@
     <button (click)="handleOffer()">Handle Offer</button>
   </div>
   <div>
+    <textarea [(ngModel)]="answer" placeholder="Paste answer here"></textarea>
+    <button (click)="handleAnswer()">Handle Answer</button>
+  </div>
+  <div>
+    <textarea [(ngModel)]="iceCandidate" placeholder="Paste ICE candidate here"></textarea>
+    <button (click)="handleIceCandidate()">Handle ICE Candidate</button>
+  </div>
+  <div>
     <input [(ngModel)]="message" placeholder="Enter message" />
     <button (click)="sendMessage()">Send Message</button>
   </div>

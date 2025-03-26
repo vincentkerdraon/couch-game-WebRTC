@@ -13,10 +13,12 @@ export class AppComponent {
   message: string = '';
   receivedMessages: string[] = [];
   offer: string = '';
+  answer: string = '';
+  iceCandidate: string = '';
 
   constructor(private webrtcService: WebrtcService) {
     this.webrtcService.createPeerConnection();
-    if (this.webrtcService.dataChannel != null) {
+    if (this.webrtcService.dataChannel) {
       this.webrtcService.dataChannel.onmessage = (event) => {
         this.receivedMessages.push(event.data);
       };
@@ -27,33 +29,27 @@ export class AppComponent {
   createOffer(): void {
     this.webrtcService.createOffer().then((offer) => {
       console.log('Offer created:', offer);
+      this.offer = JSON.stringify(offer);
     });
   }
 
   handleOffer(): void {
-    const message = JSON.parse(this.offer);
-    if (message.type === 'offer') {
-      this.createAnswer(message);
-    } else if (message.type === 'answer') {
-      this.setRemoteDescription(message);
-    } else if (message.type === 'candidate') {
-      this.addIceCandidate(message.candidate);
-    }
-  }
-
-  createAnswer(offer: RTCSessionDescriptionInit): void {
+    const offer: RTCSessionDescriptionInit = JSON.parse(this.offer);
     this.webrtcService.createAnswer(offer).then((answer) => {
       console.log('Answer created:', answer);
+      this.answer = JSON.stringify(answer);
     });
   }
 
-  setRemoteDescription(answer: RTCSessionDescriptionInit): void {
+  handleAnswer(): void {
+    const answer: RTCSessionDescriptionInit = JSON.parse(this.answer);
     this.webrtcService.setRemoteDescription(answer).then(() => {
       console.log('Remote description set:', answer);
     });
   }
 
-  addIceCandidate(candidate: RTCIceCandidateInit): void {
+  handleIceCandidate(): void {
+    const candidate: RTCIceCandidateInit = JSON.parse(this.iceCandidate);
     this.webrtcService.addIceCandidate(candidate).then(() => {
       console.log('ICE candidate added:', candidate);
     });
