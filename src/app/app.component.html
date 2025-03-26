@@ -4,12 +4,8 @@
     <button (click)="createOffer()">Create Offer</button>
   </div>
   <div>
-    <textarea [(ngModel)]="offer" placeholder="Paste offer here"></textarea>
-    <button (click)="handleOffer()">Handle Offer</button>
-  </div>
-  <div>
-    <textarea [(ngModel)]="answer" placeholder="Paste answer here"></textarea>
-    <button (click)="handleAnswer()">Handle Answer</button>
+    <textarea [(ngModel)]="sdp" placeholder="Paste offer or answer here"></textarea>
+    <button (click)="handleSdp()">Handle SDP</button>
   </div>
   <div>
     <textarea [(ngModel)]="iceCandidate" placeholder="Paste ICE candidate here"></textarea>

@@ -12,8 +12,7 @@ export class AppComponent {
   title = 'couch-game-WebRTC';
   message: string = '';
   receivedMessages: string[] = [];
-  offer: string = '';
-  answer: string = '';
+  sdp: string = '';
   iceCandidate: string = '';
 
   constructor(private webrtcService: WebrtcService) {
@@ -29,23 +28,22 @@ export class AppComponent {
   createOffer(): void {
     this.webrtcService.createOffer().then((offer) => {
       console.log('Offer created:', offer);
-      this.offer = JSON.stringify(offer);
+      this.sdp = JSON.stringify(offer);
     });
   }
 
-  handleOffer(): void {
-    const offer: RTCSessionDescriptionInit = JSON.parse(this.offer);
-    this.webrtcService.createAnswer(offer).then((answer) => {
-      console.log('Answer created:', answer);
-      this.answer = JSON.stringify(answer);
-    });
-  }
-
-  handleAnswer(): void {
-    const answer: RTCSessionDescriptionInit = JSON.parse(this.answer);
-    this.webrtcService.setRemoteDescription(answer).then(() => {
-      console.log('Remote description set:', answer);
-    });
+  handleSdp(): void {
+    const sdp = JSON.parse(this.sdp);
+    if (sdp.type === 'offer') {
+      this.webrtcService.createAnswer(sdp).then((answer) => {
+        console.log('Answer created:', answer);
+        this.sdp = JSON.stringify(answer);
+      });
+    } else if (sdp.type === 'answer') {
+      this.webrtcService.setRemoteDescription(sdp).then(() => {
+        console.log('Remote description set:', sdp);
+      });
+    }
   }
 
   handleIceCandidate(): void {
