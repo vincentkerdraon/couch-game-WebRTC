@@ -21,8 +21,8 @@ export class ControllerComponent {
 
   constructor(public networkService: NetworkService) { }
 
-  initController(sessionId: string): void {
-    this.networkService.initController(sessionId);
+  async initController(sessionId: string): Promise<void> {
+    await this.networkService.initController(sessionId);
     this.networkService.sendOffer();
     this.connected = true;
   }
