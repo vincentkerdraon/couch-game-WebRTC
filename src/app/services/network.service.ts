@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { controllerConnectionID, Role, SyncMessage } from './network';
+import { controllerConnectionID, Role, SyncMessage } from '../definitions/network';
 import { WebRTCService } from './webrtc.service';
 import { WebSocketService } from './websocket.service';
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SyncMessage } from './network';
+import { SyncMessage } from '../definitions/network';
 
 @Injectable({
   providedIn: 'root'

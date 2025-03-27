@@ -1,0 +1,14 @@
+<h2>HOST</h2>
+<h3>Session ID: {{ networkService.sessionId }}</h3>
+<h3>Peer ID Host: {{ networkService.peerIdHost }}</h3>
+<div>
+    <input [(ngModel)]="peerId" placeholder="peerId destination" />
+    <input [(ngModel)]="message" placeholder="Enter message" />
+    <button (click)="sendMessage()">Send</button>
+</div>
+<!-- <div>
+    <h2>Received Messages:</h2>
+    <ul>
+        <li *ngFor="let msg of networkService.receivedMessages">{{ msg }}</li>
+    </ul>
+</div> -->

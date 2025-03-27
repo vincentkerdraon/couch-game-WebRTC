@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { controllerConnectionID } from './network';
+import { controllerConnectionID } from '../definitions/network';
 
 @Injectable({
   providedIn: 'root'
@@ -134,12 +134,11 @@ export class WebRTCService {
     if (!dataChannel) {
       throw new Error('Data channel not found for peer: ' + peerId)
     }
-    console.log('[' + dataChannel.id + '][' + peerId + '] Data channel state:', dataChannel.readyState)
     if (dataChannel.readyState === 'open') {
       dataChannel.send(message)
       console.log('[' + dataChannel.id + '][' + peerId + ']  Message sent:', message)
     } else {
-      console.log('[' + dataChannel.id + '][' + peerId + ']  Data channel is not open, waiting...')
+      console.log('[' + dataChannel.id + '][' + peerId + ']  Data channel is not open, state:', dataChannel.readyState)
       dataChannel.onopen = () => {
         console.log('[' + dataChannel.id + '][' + peerId + ']  Data channel is now open')
         dataChannel.send(message)
