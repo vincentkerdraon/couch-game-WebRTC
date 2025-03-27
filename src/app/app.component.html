@@ -1,24 +1,45 @@
 <div>
   <h1>{{ title }}</h1>
-  <div>
-    <button (click)="createOffer()">Create Offer</button>
+  <div *ngIf="!initialized">
+    <button (click)="initialized='Host';networkService.initHost()">Host</button>
+    <button (click)="initialized='Controller'">Controller</button>
   </div>
-  <div>
-    <textarea [(ngModel)]="sdp" placeholder="Paste offer or answer here"></textarea>
-    <button (click)="handleSdp()">Handle SDP</button>
+  <div *ngIf="initialized === 'Host'">
+    <h2>HOST</h2>
+    <h2>Session ID: {{ networkService.sessionId }}</h2>
+    <h2>Peer ID Host: {{ networkService.peerIdHost }}</h2>
+    <div>
+      <input [(ngModel)]="peerId" placeholder="peerId destination" />
+      <input [(ngModel)]="message" placeholder="Enter message" />
+      <button (click)="sendMessageToController()">Send to Controller</button>
+    </div>
+    <div>
+      <h2>Received Messages:</h2>
+      <ul>
+        <li *ngFor="let msg of receivedMessages">{{ msg }}</li>
+      </ul>
+    </div>
   </div>
-  <div>
-    <textarea [(ngModel)]="iceCandidate" placeholder="Paste ICE candidate here"></textarea>
-    <button (click)="handleIceCandidate()">Handle ICE Candidate</button>
-  </div>
-  <div>
-    <input [(ngModel)]="message" placeholder="Enter message" />
-    <button (click)="sendMessage()">Send Message</button>
-  </div>
-  <div>
-    <h2>Received Messages:</h2>
-    <ul>
-      <li *ngFor="let msg of receivedMessages">{{ msg }}</li>
-    </ul>
+  <div *ngIf="initialized === 'Controller'">
+    <h2>CONTROLLER</h2>
+    <div *ngIf="!connected">
+      <label for="sessionId">Session ID:</label>
+      <input [(ngModel)]="sessionId" id="sessionId" placeholder="Enter session ID" />
+      <button (click)="initController()">Connect</button>
+    </div>
+    <div *ngIf="connected">
+      <h2>Session ID: {{ networkService.sessionId }}</h2>
+      <h2>Peer ID Self: {{ networkService.peerIdSelf }}</h2>
+      <div>
+        <input [(ngModel)]="message" placeholder="Enter message" />
+        <button (click)="sendMessageToHost()">Send to Host</button>
+      </div>
+      <div>
+        <h2>Received Messages:</h2>
+        <ul>
+          <li *ngFor="let msg of receivedMessages">{{ msg }}</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
