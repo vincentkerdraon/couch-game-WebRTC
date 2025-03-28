@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { controllerConnectionID } from '../definitions/network';
+import { Subject } from 'rxjs';
+import { ContentMessage, controllerConnectionID, timeNowTimestampSecond } from '../definitions/network';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +8,13 @@ import { controllerConnectionID } from '../definitions/network';
 export class WebRTCService {
   private pendingCandidates: Map<string, RTCIceCandidateInit[]> = new Map();
 
-  constructor() { }
+  //FIXME temporary for demo
+  public messages$: Subject<ContentMessage>;
+
+  constructor() {
+    this.messages$ = new Subject<ContentMessage>();
+  }
+
 
   createPeerConnection(iceCb: (candidate: RTCIceCandidate) => void): RTCPeerConnection {
     console.log('createPeerConnection');
@@ -35,7 +42,14 @@ export class WebRTCService {
       console.log(`[${dataChannel.id}][${peerId}] Data channel is open`);
     };
     dataChannel.onmessage = (event) => {
-      console.log(`[${dataChannel.id}][${peerId}] Received message:`, event.data);
+      // console.log(`[${dataChannel.id}][${peerId}] Received message:`, event.data);
+      const s = event.data.toString()
+      //special demo case, test latency
+      if (s.includes("testLatencyPing=")) {
+        const latencyValue = s.split("testLatencyPing=")[1];
+        this.sendMessage(dataChannel, "testLatencyPong=" + latencyValue);
+      }
+      this.messages$.next({ from: peerId, timestamp: timeNowTimestampSecond(), content: s });
     };
     dataChannel.onclose = () => {
       console.log(`[${dataChannel.id}][${peerId}] Data channel is closed`);
@@ -92,13 +106,13 @@ export class WebRTCService {
   sendMessage(dataChannel: RTCDataChannel, message: string): void {
     if (dataChannel.readyState === 'open') {
       dataChannel.send(message);
-      console.log(`[${dataChannel.id}] Message sent:`, message);
+      // console.log(`[${dataChannel.id}] Message sent:`, message);
     } else {
       console.log(`[${dataChannel.id}] Data channel is not open, state:`, dataChannel.readyState);
       dataChannel.onopen = () => {
         console.log(`[${dataChannel.id}] Data channel is now open`);
         dataChannel.send(message);
-        console.log(`[${dataChannel.id}] Message sent:`, message);
+        // console.log(`[${dataChannel.id}] Message sent:`, message);
       };
     }
   }

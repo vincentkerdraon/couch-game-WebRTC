@@ -3,10 +3,13 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Role } from '../../definitions/network';
 import { NetworkService } from '../../services/network.service';
+import { WebRTCService } from '../../services/web-rtc.service';
+import { TrafficReceiveComponent } from "../traffic-receive/traffic-receive.component";
+import { TrafficSendComponent } from "../traffic-send/traffic-send.component";
 
 @Component({
   selector: 'app-controller',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TrafficReceiveComponent, TrafficSendComponent],
   templateUrl: './controller.component.html',
   styleUrl: './controller.component.scss'
 })
@@ -18,8 +21,19 @@ export class ControllerComponent {
   iceCandidate: string = '';
   initialized?: Role = undefined;
   connected: boolean = false;
+  lastMessage: string = '';
 
-  constructor(public networkService: NetworkService) { }
+
+  constructor(public networkService: NetworkService, private webrtcService: WebRTCService) {
+    webrtcService.messages$.subscribe((trafficData) => {
+      if (!trafficData) {
+        return
+      }
+      if (!trafficData.content.startsWith(".")) {
+        this.lastMessage = trafficData.content;
+      }
+    });
+  }
 
   async initController(sessionId: string): Promise<void> {
     await this.networkService.initController(sessionId);

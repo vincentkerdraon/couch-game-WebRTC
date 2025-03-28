@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Role, SyncMessage } from '../definitions/network';
+import { generateSessionId, Role, SyncMessage } from '../definitions/network';
 import { WebRTCControllerService } from './web-rtc-controller.service';
 import { WebRTCHostService } from './web-rtc-host.service';
 import { WebSocketService } from './websocket.service';
@@ -11,7 +11,6 @@ export class NetworkService {
   public sessionId: string = '';
   public peerIdHost: string = '';
   public peerIdSelf: string = '';
-  public receivedMessages: string[] = [];
   public role?: Role;
 
   constructor(
@@ -23,8 +22,8 @@ export class NetworkService {
   initHost(): void {
     let role: Role = 'Host';
     this.role = role;
-    this.sessionId = this.generateSessionId();
-    this.peerIdHost = this.generateSessionId();
+    this.sessionId = generateSessionId();
+    this.peerIdHost = generateSessionId();
     this.sessionId = "session1"; // FIXME
     this.peerIdHost = "peerHost"; // FIXME
     this.peerIdSelf = this.peerIdHost;
@@ -65,7 +64,7 @@ export class NetworkService {
     let role: Role = 'Controller';
     this.role = role;
     this.sessionId = sessionId;
-    this.peerIdSelf = this.generateSessionId();
+    this.peerIdSelf = generateSessionId();
     this.peerIdSelf = "peerController1"; // FIXME
 
     await this.websocketService.connect('ws://localhost:8080');
@@ -130,19 +129,20 @@ export class NetworkService {
     this.websocketService.sendMessage(sysMessage);
   }
 
+  sendMessage(peerId: string, message: string): void {
+    if (this.role === 'Host') {
+      this.sendMessageToController(peerId, message);
+    } else if (this.role === 'Controller') {
+      this.sendMessageToHost(message);
+    }
+  }
   sendMessageToController(peerId: string, message: string): void {
     this.webRTCHostService.sendMessage(peerId, this.peerIdHost + "/ " + message);
   }
-
   sendMessageToHost(message: string): void {
     this.webRTCControllerService.sendMessage(this.peerIdSelf + "/ " + message);
   }
 
-  getReceivedMessages(): string[] {
-    return this.receivedMessages;
-  }
 
-  private generateSessionId(): string {
-    return Math.random().toString(36).substr(2, 9);
-  }
+
 }

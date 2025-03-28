@@ -1,0 +1,15 @@
+<div *ngIf="dataReceivedLast10s.size > 0">
+    <h3>Test receive traffic</h3>
+    <p>Data received in the last 10 seconds:</p>
+    <ul>
+        <li *ngFor="let item of dataReceivedLast10s | keyvalue">
+            {{ item.key }}: {{ formatBytes(item.value) }}
+        </li>
+    </ul>
+    <p>Data received in the last 1 minute:</p>
+    <ul>
+        <li *ngFor="let item of dataReceivedLast1min | keyvalue">
+            {{ item.key }}: {{ formatBytes(item.value) }}
+        </li>
+    </ul>
+</div>

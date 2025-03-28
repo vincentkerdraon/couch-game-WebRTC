@@ -1,0 +1,30 @@
+<h3>Test send traffic: Bandwidth</h3>
+<div>
+    <label for="peerID">Peer ID:</label>
+    <input type="text" id="peerID" name="peerID" placeholder="Enter Peer ID" [(ngModel)]="peerID" (change)="update()">
+</div>
+<div>
+    <label for="bitsPerMessage">Bits per Message:</label>
+    <input type="number" id="bitsPerMessage" name="bitsPerMessage" placeholder="Enter bits per message"
+        [(ngModel)]="bitsPerMessage" (change)="update()">
+</div>
+<div>
+    <label for="messagesPerSecond">Messages per Second:</label>
+    <input type="number" id="messagesPerSecond" name="messagesPerSecond" placeholder="Enter messages per second"
+        [(ngModel)]="messagesPerSecond" (change)="update()">
+</div>
+<div>
+    <label for="activated">Activated:</label>
+    <input type="checkbox" id="activated" name="activated" [(ngModel)]="activated" (change)="update()">
+</div>
+<h3>Test send traffic: Latency</h3>
+<div>
+    <label for="peerID">Peer ID:</label>
+    <input type="text" id="peerID" name="peerID" placeholder="Enter Peer ID" [(ngModel)]="peerID" (change)="update()">
+</div>
+<div>
+    <button (click)="testLatency()">Test Latency</button>
+    <div *ngIf="latencyMS!=0">
+        {{ latencyMS }} ms
+    </div>
+</div>

@@ -20,3 +20,17 @@ export interface SignalMessage {
 
 export type ConnectionID = string
 export const controllerConnectionID: ConnectionID = "c";
+
+export interface ContentMessage {
+    timestamp: number
+    from: string;
+    content: string;
+}
+
+export function timeNowTimestampSecond(): number {
+    return Math.floor(Date.now() / 1000);
+}
+
+export function generateSessionId(): string {
+    return Math.random().toString(36).substr(2, 9);
+}
