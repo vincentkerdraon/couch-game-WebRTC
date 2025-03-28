@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { controllerConnectionID, timeNowTimestampSecond } from '../../definitions/network';
 import { WebRTCService } from '../../services/web-rtc.service';
 
@@ -12,11 +13,12 @@ import { WebRTCService } from '../../services/web-rtc.service';
 export class TrafficReceiveComponent {
   dataReceivedLast10s: Map<string, number> = new Map();
   dataReceivedLast1min: Map<string, number> = new Map();
+  private subscriptionMessages: Subscription;
 
   trafficDataMap: Map<string, Map<number, number>> = new Map();
 
-  constructor(private webrtcService: WebRTCService) {
-    webrtcService.messages$.subscribe((trafficData) => {
+  constructor(private webrtcService: WebRTCService, private cdr: ChangeDetectorRef) {
+    this.subscriptionMessages = webrtcService.messages$.subscribe((trafficData) => {
       if (!trafficData) {
         return
       }
@@ -38,14 +40,17 @@ export class TrafficReceiveComponent {
       this.trafficDataMap.set(from, mapFrom);
     });
 
+
     setInterval(() => {
-      //read trafficDataMap and update dataReceivedLast10s and dataReceivedLast1min
+      // Read trafficDataMap and update dataReceivedLast10s and dataReceivedLast1min
       const now = timeNowTimestampSecond();
-      this.dataReceivedLast10s = new Map();
-      this.dataReceivedLast1min = new Map();
+      const newDataReceivedLast10s = new Map<string, number>();
+      const newDataReceivedLast1min = new Map<string, number>();
+
       this.trafficDataMap.forEach((map, from) => {
         let totalBytesLast10s = 0;
         let totalBytesLast1min = 0;
+
         map.forEach((bytes, timestamp) => {
           if (now - timestamp <= 10) {
             totalBytesLast10s += bytes;
@@ -56,12 +61,28 @@ export class TrafficReceiveComponent {
             map.delete(timestamp);
           }
         });
-        this.dataReceivedLast10s.set(from, totalBytesLast10s)
-        this.dataReceivedLast1min.set(from, totalBytesLast1min)
+
+        if (totalBytesLast1min > 0) {
+          newDataReceivedLast10s.set(from, totalBytesLast10s);
+          newDataReceivedLast1min.set(from, totalBytesLast1min);
+        }
       });
-    }, 500);
+
+      const hasChanged =
+        !this.mapsAreEqual(this.dataReceivedLast10s, newDataReceivedLast10s) ||
+        !this.mapsAreEqual(this.dataReceivedLast1min, newDataReceivedLast1min);
+
+      if (hasChanged) {
+        this.dataReceivedLast10s = newDataReceivedLast10s;
+        this.dataReceivedLast1min = newDataReceivedLast1min;
+        this.cdr.detectChanges();
+      }
+    }, 1000);
   }
 
+  ngOnDestroy() {
+    this.subscriptionMessages.unsubscribe();
+  }
 
   formatBytes(bytes: number): string {
     if (bytes >= 1024 * 1024 * 1024) {
@@ -71,10 +92,20 @@ export class TrafficReceiveComponent {
     } else if (bytes >= 1024) {
       return (bytes / 1024).toFixed(2) + ' kb';
     } else {
-      return bytes + ' b';
+      return bytes.toFixed(2) + ' b';
     }
   }
 
-
+  private mapsAreEqual(map1: Map<string, number>, map2: Map<string, number>): boolean {
+    if (map1.size !== map2.size) {
+      return false;
+    }
+    for (const [key, value] of map1) {
+      if (map2.get(key) !== value) {
+        return false;
+      }
+    }
+    return true;
+  }
 
 }

@@ -19,7 +19,7 @@ export interface SignalMessage {
 }
 
 export type ConnectionID = string
-export const controllerConnectionID: ConnectionID = "c";
+export const controllerConnectionID: ConnectionID = "(host)";
 
 export interface ContentMessage {
     timestamp: number

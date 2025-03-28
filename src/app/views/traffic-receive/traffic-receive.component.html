@@ -2,12 +2,12 @@
     <h3>Test receive traffic</h3>
     <ul>
         <li *ngFor="let item of dataReceivedLast10s | keyvalue">
-            {{ item.key }}: {{ formatBytes(item.value) }} / 10s
+            {{ item.key }}: {{ formatBytes(item.value/10) }} / s (last 10s)
         </li>
     </ul>
     <ul>
         <li *ngFor="let item of dataReceivedLast1min | keyvalue">
-            {{ item.key }}: {{ formatBytes(item.value) }} / 1 min
+            {{ item.key }}: {{ formatBytes(item.value/60) }} / s (last 1 minute)
         </li>
     </ul>
 </div>

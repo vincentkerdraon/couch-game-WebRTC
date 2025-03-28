@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ConnectionStatus } from '../definitions/network';
+import { ConnectionStatus, ConnectionStatuses } from '../definitions/network';
 import { WebRTCService } from './web-rtc.service';
 
 @Injectable({
@@ -22,7 +22,9 @@ export class WebRTCHostService {
     peerConnection.oniceconnectionstatechange = () => {
       console.log(`ICE connection state: ${peerConnection?.iceConnectionState}`);
       const status: ConnectionStatus = peerConnection?.iceConnectionState as ConnectionStatus;
-      this.webRTCService.connectionStatuses$.next({ connectionStatus: status, peerId: peerId });
+      const connStatus: ConnectionStatuses = { connectionStatus: status, peerId: peerId };
+      this.webRTCService.updateStatutes(connStatus);
+      this.webRTCService.connectionStatuses$.next(connStatus);
     };
 
     peerConnection.ondatachannel = (event) => {

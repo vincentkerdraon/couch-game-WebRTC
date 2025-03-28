@@ -11,6 +11,8 @@ export class WebRTCService {
   //FIXME temporary for demo
   public messages$: Subject<ContentMessage> = new Subject<ContentMessage>();
   public connectionStatuses$: Subject<ConnectionStatuses> = new Subject<ConnectionStatuses>();
+  public statuses: ConnectionStatuses[] = [];
+
 
   constructor() { }
 
@@ -28,6 +30,18 @@ export class WebRTCService {
     };
 
     return peerConnection;
+  }
+
+  updateStatutes(status: ConnectionStatuses): void {
+    let f = false;
+    for (let i = 0; i < this.statuses.length; i++) {
+      if (this.statuses[i].peerId === status.peerId) {
+        this.statuses[i] = status;
+        f = true;
+        break;
+      }
+    }
+    if (!f) { this.statuses.push(status); }
   }
 
   setupDataChannel(peerId: string, dataChannel: RTCDataChannel): void {

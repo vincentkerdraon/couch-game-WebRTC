@@ -3,7 +3,7 @@
     <div>
         <label for="peerID">Peer ID:</label>
         <select id="peerID" name="peerID" [(ngModel)]="peerId" (change)="update()">
-            <option *ngFor="let status of statuses" [value]="status.peerId">{{ status.peerId }}</option>
+            <option *ngFor="let status of webrtcService.statuses" [value]="status.peerId">{{ status.peerId }}</option>
         </select>
     </div>
     <div *ngIf="!peerConnected">

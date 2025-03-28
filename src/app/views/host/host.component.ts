@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ConnectionStatuses } from '../../definitions/network';
+import { Subscription } from 'rxjs';
 import { NetworkService } from '../../services/network.service';
 import { WebRTCService } from '../../services/web-rtc.service';
 import { TrafficReceiveComponent } from "../traffic-receive/traffic-receive.component";
@@ -19,22 +19,11 @@ export class HostComponent {
   sessionId: string = '';
   connected: boolean = false;
   lastMessage: string = '';
-  statuses: ConnectionStatuses[] = [];
+  private subscriptionMessages: Subscription;
 
-  constructor(public networkService: NetworkService, private webrtcService: WebRTCService) {
-    webrtcService.connectionStatuses$.subscribe((status) => {
-      // link to statuses by status.peerId
-      for (let i = 0; i < this.statuses.length; i++) {
-        if (this.statuses[i].peerId === status.peerId) {
-          this.statuses[i] = status;
-          return;
-        }
-      }
-      this.statuses.push(status);
-    });
-
+  constructor(public networkService: NetworkService, public webrtcService: WebRTCService) {
     this.networkService.initHost();
-    webrtcService.messages$.subscribe((trafficData) => {
+    this.subscriptionMessages = webrtcService.messages$.subscribe((trafficData) => {
       if (!trafficData) {
         return
       }
@@ -42,6 +31,10 @@ export class HostComponent {
         this.lastMessage = trafficData.content;
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.subscriptionMessages.unsubscribe();
   }
 
   sendMessage(peerId: string): void {

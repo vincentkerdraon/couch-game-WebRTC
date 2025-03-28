@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ConnectionStatuses } from '../../definitions/network';
+import { Subscription } from 'rxjs';
 import { NetworkService } from '../../services/network.service';
 import { WebRTCService } from '../../services/web-rtc.service';
 
@@ -18,43 +18,38 @@ export class TrafficSendComponent {
   activated: boolean = false;
   private intervalId: any;
   latencyMS: number = 0;
-  statuses: ConnectionStatuses[] = [];
   peerConnected: boolean = false;
   peerConnectedAtLeastOne: boolean = false;
+  private subscriptionConnectionStatuses: Subscription;
 
 
-  constructor(public networkService: NetworkService, private webrtcService: WebRTCService) {
-    webrtcService.connectionStatuses$.subscribe((status) => {
-      let f = false;
-      for (let i = 0; i < this.statuses.length; i++) {
-        if (this.statuses[i].peerId === status.peerId) {
-          this.statuses[i] = status;
-          f = true;
-          break;
-        }
-      }
-      if (!f) { this.statuses.push(status); }
-
-
-      this.peerConnectedAtLeastOne = false
-      this.statuses.forEach((s) => {
-        if (s.connectionStatus == "connected") {
-          this.peerConnectedAtLeastOne = true
-        }
-        if (this.peerId == "") {
-          this.peerId = s.peerId;
-        }
-      });
-
+  constructor(public networkService: NetworkService, public webrtcService: WebRTCService, private cdr: ChangeDetectorRef) {
+    this.subscriptionConnectionStatuses = webrtcService.connectionStatuses$.subscribe((status) => {
+      console.log("TrafficSendComponent connectionStatuses status=", status);
       this.update();
+      this.cdr.detectChanges();
     });
+    this.update();
+  }
 
 
+  ngOnDestroy() {
+    this.subscriptionConnectionStatuses.unsubscribe();
   }
 
   public update() {
+    this.peerConnectedAtLeastOne = false
+    this.webrtcService.statuses.forEach((s) => {
+      if (s.connectionStatus == "connected") {
+        this.peerConnectedAtLeastOne = true
+      }
+      if (this.peerId == "") {
+        this.peerId = s.peerId;
+      }
+    });
+
     this.peerConnected = false;
-    this.statuses.forEach((status) => {
+    this.webrtcService.statuses.forEach((status) => {
       if (status.peerId === this.peerId) {
         this.peerConnected = (status.connectionStatus == "connected");
       }
