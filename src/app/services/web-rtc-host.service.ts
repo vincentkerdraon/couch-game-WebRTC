@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ConnectionStatus } from '../definitions/network';
 import { WebRTCService } from './web-rtc.service';
 
 @Injectable({
@@ -18,6 +19,11 @@ export class WebRTCHostService {
     const peerConnection = this.webRTCService.createPeerConnection((candidate) => {
       iceCandidateCallback(peerId, candidate);
     });
+    peerConnection.oniceconnectionstatechange = () => {
+      console.log(`ICE connection state: ${peerConnection?.iceConnectionState}`);
+      const status: ConnectionStatus = peerConnection?.iceConnectionState as ConnectionStatus;
+      this.webRTCService.connectionStatuses$.next({ connectionStatus: status, peerId: peerId });
+    };
 
     peerConnection.ondatachannel = (event) => {
       console.log(`Data channel received for peerId: ${peerId}`);
@@ -68,7 +74,7 @@ export class WebRTCHostService {
     if (!dataChannel) {
       throw new Error(`DataChannel not found for peerId: ${peerId}`);
     }
-    console.log(`Sending message to peerId: ${peerId}`);
+    // console.log(`Sending message to peerId: ${peerId}`);
     this.webRTCService.sendMessage(dataChannel, message);
   }
 

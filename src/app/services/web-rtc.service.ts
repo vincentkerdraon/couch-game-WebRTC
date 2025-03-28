@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { ContentMessage, controllerConnectionID, timeNowTimestampSecond } from '../definitions/network';
+import { ConnectionStatuses, ContentMessage, controllerConnectionID, timeNowTimestampSecond } from '../definitions/network';
 
 @Injectable({
   providedIn: 'root'
@@ -9,12 +9,10 @@ export class WebRTCService {
   private pendingCandidates: Map<string, RTCIceCandidateInit[]> = new Map();
 
   //FIXME temporary for demo
-  public messages$: Subject<ContentMessage>;
+  public messages$: Subject<ContentMessage> = new Subject<ContentMessage>();
+  public connectionStatuses$: Subject<ConnectionStatuses> = new Subject<ConnectionStatuses>();
 
-  constructor() {
-    this.messages$ = new Subject<ContentMessage>();
-  }
-
+  constructor() { }
 
   createPeerConnection(iceCb: (candidate: RTCIceCandidate) => void): RTCPeerConnection {
     console.log('createPeerConnection');
@@ -45,9 +43,9 @@ export class WebRTCService {
       // console.log(`[${dataChannel.id}][${peerId}] Received message:`, event.data);
       const s = event.data.toString()
       //special demo case, test latency
-      if (s.includes("testLatencyPing=")) {
-        const latencyValue = s.split("testLatencyPing=")[1];
-        this.sendMessage(dataChannel, "testLatencyPong=" + latencyValue);
+      if (s.startsWith(".testLatencyPing=")) {
+        const latencyValue = s.split(".testLatencyPing=")[1];
+        this.sendMessage(dataChannel, ".testLatencyPong=" + latencyValue);
       }
       this.messages$.next({ from: peerId, timestamp: timeNowTimestampSecond(), content: s });
     };

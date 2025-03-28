@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ConnectionStatus } from '../definitions/network';
 import { WebRTCService } from './web-rtc.service';
 
 @Injectable({
@@ -13,6 +14,11 @@ export class WebRTCControllerService {
   initialize(iceCandidateCallback: (candidate: RTCIceCandidate) => void): void {
     console.log('Initializing WebRTCControllerService');
     this.peerConnection = this.webRTCService.createPeerConnection(iceCandidateCallback);
+    this.peerConnection.oniceconnectionstatechange = () => {
+      console.log(`ICE connection state: ${this.peerConnection?.iceConnectionState}`);
+      const status: ConnectionStatus = this.peerConnection?.iceConnectionState as ConnectionStatus;
+      this.webRTCService.connectionStatuses$.next({ connectionStatus: status, peerId: "host" });
+    };
   }
 
   async createOffer(): Promise<RTCSessionDescriptionInit> {
@@ -47,7 +53,7 @@ export class WebRTCControllerService {
     if (!this.dataChannel) {
       throw new Error('DataChannel is not initialized');
     }
-    console.log('Sending message in WebRTCControllerService');
+    // console.log('Sending message in WebRTCControllerService');
     this.webRTCService.sendMessage(this.dataChannel, message);
   }
 

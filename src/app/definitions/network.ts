@@ -34,3 +34,11 @@ export function timeNowTimestampSecond(): number {
 export function generateSessionId(): string {
     return Math.random().toString(36).substr(2, 9);
 }
+
+/// For WebRTC
+export type ConnectionStatus = 'new' | 'checking' | 'connected' | 'completed' | 'disconnected' | 'failed' | 'closed';
+
+export interface ConnectionStatuses {
+    connectionStatus: ConnectionStatus
+    peerId: string;
+}

@@ -1,23 +1,28 @@
 <h2>CONTROLLER</h2>
 
-<div *ngIf="!connected">
+<div *ngIf="!status">
     <label for="sessionId">Session ID:</label>
     <input [(ngModel)]="sessionId" id="sessionId" placeholder="Enter host session ID" />
     <button (click)="initController(this.sessionId)">Connect</button>
 </div>
 
-<div *ngIf="connected">
+<div *ngIf="status && status.connectionStatus!='connected'">
+    <p>disconnected</p>
+</div>
+
+<div *ngIf="status && status.connectionStatus=='connected'">
     <h3>Session ID: {{ networkService.sessionId }}</h3>
     <h3>Peer ID Self: {{ networkService.peerIdSelf }}</h3>
     <h3>Peer ID Host: {{ networkService.peerIdHost }}</h3>
+    <h3>Send message</h3>
     <div>
         <input [(ngModel)]="message" placeholder="Enter message" />
         <button (click)="sendMessage()">Send</button>
     </div>
     <div *ngIf="this.lastMessage">
-        Last message: <i>{{this.lastMessage}}</i>
+        <h3>Received message</h3>
+        <i>{{this.lastMessage}}</i>
     </div>
-
 
     <app-traffic-receive></app-traffic-receive>
     <app-traffic-send></app-traffic-send>

@@ -1,10 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { timeNowTimestampSecond } from '../../definitions/network';
+import { controllerConnectionID, timeNowTimestampSecond } from '../../definitions/network';
 import { WebRTCService } from '../../services/web-rtc.service';
-
-
-
 
 @Component({
   selector: 'app-traffic-receive',
@@ -17,7 +14,6 @@ export class TrafficReceiveComponent {
   dataReceivedLast1min: Map<string, number> = new Map();
 
   trafficDataMap: Map<string, Map<number, number>> = new Map();
-
 
   constructor(private webrtcService: WebRTCService) {
     webrtcService.messages$.subscribe((trafficData) => {
@@ -35,7 +31,11 @@ export class TrafficReceiveComponent {
       } else {
         mapFrom.set(now, trafficData.content.length);
       }
-      this.trafficDataMap.set(trafficData?.from, mapFrom);
+      let from = trafficData?.from;
+      if (from == controllerConnectionID) {
+        from = "(host)"
+      }
+      this.trafficDataMap.set(from, mapFrom);
     });
 
     setInterval(() => {

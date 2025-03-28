@@ -25,10 +25,9 @@ export class NetworkService {
     this.sessionId = generateSessionId();
     this.peerIdHost = generateSessionId();
     this.sessionId = "session1"; // FIXME
-    this.peerIdHost = "peerHost"; // FIXME
     this.peerIdSelf = this.peerIdHost;
 
-    this.websocketService.connect('ws://localhost:8080').then(() => {
+    this.websocketService.connect('ws://192.168.1.69:8080').then(() => {
       const initMessage: SyncMessage = { type: 'init', role: role, sessionId: this.sessionId, peerId: this.peerIdHost };
       this.websocketService.sendMessage(initMessage);
     });
@@ -65,7 +64,6 @@ export class NetworkService {
     this.role = role;
     this.sessionId = sessionId;
     this.peerIdSelf = generateSessionId();
-    this.peerIdSelf = "peerController1"; // FIXME
 
     await this.websocketService.connect('ws://localhost:8080');
 
@@ -129,20 +127,23 @@ export class NetworkService {
     this.websocketService.sendMessage(sysMessage);
   }
 
-  sendMessage(peerId: string, message: string): void {
+  sendMessage(peerId: string, autoprefix: boolean, message: string): void {
     if (this.role === 'Host') {
-      this.sendMessageToController(peerId, message);
+      this.sendMessageToController(peerId, autoprefix, message);
     } else if (this.role === 'Controller') {
-      this.sendMessageToHost(message);
+      this.sendMessageToHost(autoprefix, message);
     }
   }
-  sendMessageToController(peerId: string, message: string): void {
-    this.webRTCHostService.sendMessage(peerId, this.peerIdHost + "/ " + message);
+  sendMessageToController(peerId: string, autoprefix: boolean, message: string): void {
+    if (autoprefix) {
+      message = this.peerIdHost + "/" + message;
+    }
+    this.webRTCHostService.sendMessage(peerId, message);
   }
-  sendMessageToHost(message: string): void {
-    this.webRTCControllerService.sendMessage(this.peerIdSelf + "/ " + message);
+  sendMessageToHost(autoprefix: boolean, message: string): void {
+    if (autoprefix) {
+      message = this.peerIdSelf + "/" + message;
+    }
+    this.webRTCControllerService.sendMessage(message);
   }
-
-
-
 }
