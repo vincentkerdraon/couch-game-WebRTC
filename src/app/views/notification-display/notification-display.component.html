@@ -1,0 +1,8 @@
+<div *ngIf="notificationService.visible" class="notification alert alert-info position-fixed bottom-0 end-0 m-3"
+    [ngClass]="{
+    'alert-info': notificationService.level === 'info',
+    'alert-warning': notificationService.level === 'warning',
+    'alert-danger': notificationService.level === 'danger'
+}">
+    {{ notificationService.message }}
+</div>
