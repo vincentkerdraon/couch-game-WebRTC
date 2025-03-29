@@ -3,14 +3,26 @@
 
     <!-- Host Information -->
     <div class="card shadow-sm p-4">
-        <h4 class="text-success">Host Information</h4>
-        <div class="mb-3">
-            <strong>Session ID:</strong> {{ networkService.sessionId }}
-        </div>
-        <div class="mb-3">
-            <strong>Peer ID Host:</strong> {{ networkService.peerIdHost }}
+        <div class="row">
+            <div class="col-md-6">
+                <h4 class="text-success">Host Information</h4>
+                <div class="mb-3">
+                    <strong>Session ID:</strong> {{ networkService.sessionId }}
+                </div>
+                <div class="mb-3">
+                    <strong>Peer ID Host:</strong> {{ networkService.peerIdHost }}
+                </div>
+                <div class="mb-3">
+                    <strong>Join:</strong> {{ qrCodeUrl }}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <app-qr-code-wrapper [value]="qrCodeUrl" [class]="'qr-code'"></app-qr-code-wrapper>
+            </div>
+
         </div>
     </div>
+
 
     <!-- Received Message Section -->
     <div *ngIf="this.lastMessage || this.webrtcService.statuses.length > 0" class="card shadow-sm p-4 mt-4">

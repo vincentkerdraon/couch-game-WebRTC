@@ -4,12 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { NetworkService } from '../../services/network.service';
 import { WebRTCService } from '../../services/web-rtc.service';
+import { QRCodeWrapperComponent } from '../qr-code-wrapper/qr-code-wrapper.component';
 import { TrafficReceiveComponent } from "../traffic-receive/traffic-receive.component";
 import { TrafficSendComponent } from "../traffic-send/traffic-send.component";
 
 @Component({
   selector: 'app-host',
-  imports: [CommonModule, FormsModule, TrafficReceiveComponent, TrafficSendComponent],
+  imports: [CommonModule, FormsModule, TrafficReceiveComponent, TrafficSendComponent, QRCodeWrapperComponent],
   templateUrl: './host.component.html',
   styleUrl: './host.component.scss'
 })
@@ -20,8 +21,10 @@ export class HostComponent {
   connected: boolean = false;
   lastMessage: string = '';
   private subscriptionMessages: Subscription;
+  qrCodeUrl: string;
 
   constructor(public networkService: NetworkService, public webrtcService: WebRTCService) {
+    this.qrCodeUrl = `http://192.168.1.100:4200/controller?sessionId=${this.networkService.sessionId}`;
     this.networkService.initHost();
     this.subscriptionMessages = webrtcService.messages$.subscribe((trafficData) => {
       if (!trafficData) {
