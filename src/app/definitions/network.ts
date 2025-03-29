@@ -4,7 +4,8 @@ export interface SyncMessage {
     type: SyncMessageType;
     role: Role;
     sessionId: string;
-    peerId: string;
+    peerIdFrom: string;
+    peerIdTo?: string;
     content?: SignalMessage;
 }
 

@@ -49,13 +49,19 @@ export class WebSocketService {
       throw new Error('WebSocket is not initialized');
     }
     this.socket.onmessage = (event) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const message = JSON.parse(reader.result as string) as SyncMessage;
+      if (typeof event.data === 'string') {
+        const message = JSON.parse(event.data) as SyncMessage;
         console.log('[WebSocket] Receiving message:', message);
         callback(message);
-      };
-      reader.readAsText(event.data);
+      } else {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const message = JSON.parse(reader.result as string) as SyncMessage;
+          console.log('[WebSocket] Receiving message:', message);
+          callback(message);
+        };
+        reader.readAsText(event.data);
+      }
     };
   }
 

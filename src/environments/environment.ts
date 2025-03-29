@@ -1,5 +1,5 @@
 export const environment = {
     production: false,
-    urlSignalingServer: 'ws://localhost:8080',
-    urlSelf: 'http://localhost:4200'
+    urlSignalingServer: 'ws://192.168.1.69:8080',
+    urlSelf: 'http://192.168.1.69:4200'
 };

@@ -16,7 +16,7 @@ export class NotificationService {
     this.level = level;
     this.message = message;
 
-    console.log(`Notification(${level}):  ${message}`);
+    // console.log(`Notification(${level}):  ${message}`);
     setTimeout(() => {
       this.visible = false;
     }, 10000);

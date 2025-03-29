@@ -28,7 +28,7 @@ export class NetworkService {
     this.peerIdSelf = this.peerIdHost;
 
     this.websocketService.connect(environment.urlSignalingServer).then(() => {
-      const initMessage: SyncMessage = { type: 'init', role: role, sessionId: this.sessionId, peerId: this.peerIdHost };
+      const initMessage: SyncMessage = { type: 'init', role: role, sessionId: this.sessionId, peerIdFrom: this.peerIdHost };
       this.websocketService.sendMessage(initMessage);
     });
 
@@ -41,11 +41,11 @@ export class NetworkService {
           if (!message.content.sdp) {
             throw Error('Invalid offer');
           }
-          this.webRTCHostService.initializeConnection(message.peerId, (peerId, candidate) => {
+          this.webRTCHostService.initializeConnection(message.peerIdFrom, (peerId, candidate) => {
             this.sendIceCandidate(peerId, candidate);
           });
-          this.webRTCHostService.createAnswer(message.peerId, message.content.sdp).then((answer) => {
-            const resp: SyncMessage = { role: role, type: 'WebRPC', peerId: this.peerIdHost, sessionId: this.sessionId, content: { type: 'answer', sdp: answer } };
+          this.webRTCHostService.createAnswer(message.peerIdFrom, message.content.sdp).then((answer) => {
+            const resp: SyncMessage = { role: role, type: 'WebRPC', peerIdFrom: this.peerIdHost, peerIdTo: message.peerIdFrom, sessionId: this.sessionId, content: { type: 'answer', sdp: answer } };
             this.websocketService.sendMessage(resp);
           });
           break;
@@ -53,7 +53,7 @@ export class NetworkService {
           if (!message.content.candidate) {
             throw Error('Invalid candidate');
           }
-          this.webRTCHostService.addIceCandidate(message.peerId, message.content.candidate).then(() => { });
+          this.webRTCHostService.addIceCandidate(message.peerIdFrom, message.content.candidate).then(() => { });
           break;
       }
     });
@@ -72,7 +72,7 @@ export class NetworkService {
         type: 'WebRPC',
         role: role,
         sessionId: this.sessionId,
-        peerId: this.peerIdSelf,
+        peerIdFrom: this.peerIdSelf,
         content: {
           type: 'candidate',
           candidate: candidate,
@@ -90,7 +90,7 @@ export class NetworkService {
           if (!message.content.sdp) {
             throw Error('Invalid answer');
           }
-          this.peerIdHost = message.peerId;
+          this.peerIdHost = message.peerIdFrom;
           this.webRTCControllerService.setRemoteDescription(message.content.sdp);
           break;
         case 'candidate':
@@ -108,7 +108,7 @@ export class NetworkService {
       throw Error('Only controller can create offer');
     }
     this.webRTCControllerService.createOffer().then((offer) => {
-      const sysMessage: SyncMessage = { type: 'WebRPC', role: 'Controller', sessionId: this.sessionId, peerId: this.peerIdSelf, content: { type: 'offer', sdp: offer } };
+      const sysMessage: SyncMessage = { type: 'WebRPC', role: 'Controller', sessionId: this.sessionId, peerIdFrom: this.peerIdSelf, peerIdTo: this.peerIdHost, content: { type: 'offer', sdp: offer } };
       this.websocketService.sendMessage(sysMessage);
     });
   }
@@ -118,7 +118,8 @@ export class NetworkService {
       type: 'WebRPC',
       role: this.role!,
       sessionId: this.sessionId,
-      peerId: this.peerIdSelf,
+      peerIdFrom: this.peerIdSelf,
+      peerIdTo: peerId,
       content: {
         type: 'candidate',
         candidate: candidate,

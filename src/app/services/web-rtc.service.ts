@@ -26,7 +26,7 @@ export class WebRTCService {
         // Null candidate indicates ICE gathering is complete
         return;
       }
-      console.log('ICE candidate:', event.candidate);
+      // console.log('ICE candidate generated:', event.candidate);
       iceCb(event.candidate);
     };
 

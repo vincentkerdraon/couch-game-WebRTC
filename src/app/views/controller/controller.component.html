@@ -4,6 +4,9 @@
     <!-- Connection Section -->
     <div *ngIf="!status" class="card shadow-sm p-4">
         <h4 class="text-danger">Connect to Host</h4>
+        <div class="mb-3 text-muted">
+            <small><strong>Peer ID Self:</strong> {{ networkService.peerIdSelf }}</small>
+        </div>
         <div class="input-group mb-3">
             <span class="input-group-text">Session ID</span>
             <input [(ngModel)]="sessionId" id="sessionId" class="form-control" placeholder="Enter host session ID" />
