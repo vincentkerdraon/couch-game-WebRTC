@@ -69,6 +69,10 @@
                             (click)="sendMessage(status.peerId)">
                             Send Message
                         </button>
+
+                        <app-square *ngIf="status.connectionStatus == 'connected'"
+                            [clientName]="status.peerId"></app-square>
+                        <app-square-control [peerIdSelf]="peerId" [peerIdTo]="status.peerId"></app-square-control>
                     </div>
                 </div>
             </div>

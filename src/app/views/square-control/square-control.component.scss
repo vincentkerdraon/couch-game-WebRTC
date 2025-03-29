@@ -1,0 +1,24 @@
+.control-panel {
+    max-width: 300px;
+    background-color: #f8f9fa;
+}
+
+.joystick-container {
+    height: 150px;
+}
+
+.joystick {
+    width: 100px;
+    height: 100px;
+    border: 2px solid #6c757d;
+    position: relative;
+    background-color: #e9ecef;
+}
+
+.joystick-handle {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    background-color: #007bff;
+    cursor: pointer;
+}

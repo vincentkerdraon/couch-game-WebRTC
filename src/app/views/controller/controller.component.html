@@ -1,4 +1,5 @@
 <div class="container mt-4">
+
     <h2 class="text-center text-primary mb-4">🎮 CONTROLLER</h2>
 
     <!-- Connection Section -->
@@ -24,6 +25,9 @@
 
     <!-- Connected Section -->
     <div *ngIf="status && status.connectionStatus == 'connected'">
+        <app-square [clientName]="networkService.peerIdHost"></app-square>
+        <app-square-control [peerIdSelf]="networkService.peerIdSelf"
+            [peerIdTo]="networkService.peerIdHost"></app-square-control>
 
         <div class="card shadow-sm p-4 mt-4">
             <h4 class="text-success">Session Information</h4>

@@ -1,0 +1,24 @@
+<div class="control-panel p-3 border rounded shadow">
+    <!-- Joystick Control -->
+    <div class="joystick-container d-flex justify-content-center align-items-center mb-3">
+        <div class="joystick border rounded-circle d-flex justify-content-center align-items-center"
+            (mousedown)="startJoystick($event)" (mouseup)="stopJoystick()" (mouseleave)="stopJoystick()"
+            (mousemove)="moveJoystick($event)">
+            <div class="joystick-handle bg-primary rounded-circle"></div>
+        </div>
+    </div>
+
+    <!-- Color Input -->
+    <div class="mb-3">
+        <label for="colorInput" class="form-label">Square Color</label>
+        <input id="colorInput" type="color" class="form-control form-control-color" [(ngModel)]="color"
+            (change)="update(0,0)">
+    </div>
+
+    <!-- Visibility Toggle -->
+    <div class="form-check form-switch mb-3">
+        <input id="visibilityToggle" type="checkbox" class="form-check-input" [(ngModel)]="visible"
+            (change)="update(0,0)">
+        <label for="visibilityToggle" class="form-check-label">Visible</label>
+    </div>
+</div>

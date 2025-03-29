@@ -6,12 +6,14 @@ import { environment } from '../../../environments/environment';
 import { NetworkService } from '../../services/network.service';
 import { WebRTCService } from '../../services/web-rtc.service';
 import { QRCodeWrapperComponent } from '../qr-code-wrapper/qr-code-wrapper.component';
+import { SquareControlComponent } from "../square-control/square-control.component";
+import { SquareComponent } from "../square/square.component";
 import { TrafficReceiveComponent } from "../traffic-receive/traffic-receive.component";
 import { TrafficSendComponent } from "../traffic-send/traffic-send.component";
 
 @Component({
   selector: 'app-host',
-  imports: [CommonModule, FormsModule, TrafficReceiveComponent, TrafficSendComponent, QRCodeWrapperComponent],
+  imports: [CommonModule, FormsModule, TrafficReceiveComponent, TrafficSendComponent, QRCodeWrapperComponent, SquareComponent, SquareControlComponent],
   templateUrl: './host.component.html',
   styleUrl: './host.component.scss'
 })

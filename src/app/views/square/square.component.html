@@ -1,0 +1,15 @@
+<div *ngIf="visible"
+    class="square position-absolute d-flex flex-column justify-content-center align-items-center shadow" [ngStyle]="{
+        'background-color': color, 
+        'left.px': position.x, 
+        'top.px': position.y
+    }">
+    <div class="square-content text-center">
+        <p class="client-name fw-bold mb-1">
+            {{ clientName }}
+        </p>
+        <p class="last-message fst-italic small" [title]="lastMessage">
+            {{ lastMessage.length > 20 ? (lastMessage | slice:0:20) + '...' : lastMessage }}
+        </p>
+    </div>
+</div>

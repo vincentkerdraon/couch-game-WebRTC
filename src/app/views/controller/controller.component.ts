@@ -6,12 +6,14 @@ import { Subscription } from 'rxjs';
 import { ConnectionStatuses } from '../../definitions/network';
 import { NetworkService } from '../../services/network.service';
 import { WebRTCService } from '../../services/web-rtc.service';
+import { SquareControlComponent } from "../square-control/square-control.component";
+import { SquareComponent } from "../square/square.component";
 import { TrafficReceiveComponent } from "../traffic-receive/traffic-receive.component";
 import { TrafficSendComponent } from "../traffic-send/traffic-send.component";
 
 @Component({
   selector: 'app-controller',
-  imports: [CommonModule, FormsModule, TrafficReceiveComponent, TrafficSendComponent],
+  imports: [CommonModule, FormsModule, TrafficReceiveComponent, TrafficSendComponent, SquareComponent, SquareControlComponent],
   templateUrl: './controller.component.html',
   styleUrl: './controller.component.scss'
 })
