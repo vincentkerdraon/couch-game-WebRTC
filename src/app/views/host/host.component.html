@@ -3,23 +3,25 @@
 
     <!-- Host Information -->
     <div class="card shadow-sm p-4">
+        <h4 class="text-success">Host Information</h4>
         <div class="row">
             <div class="col-md-6">
-                <h4 class="text-success">Host Information</h4>
                 <div class="mb-3">
                     <strong>Session ID:</strong> {{ networkService.sessionId }}
                 </div>
                 <div class="mb-3">
-                    <strong>Peer ID Host:</strong> {{ networkService.peerIdHost }}
-                </div>
-                <div class="mb-3">
                     <strong>Join:</strong> {{ qrCodeUrl }}
+                </div>
+                <div class="mb-3 text-muted">
+                    <small><strong>Peer ID Host:</strong> {{ networkService.peerIdHost }}</small>
+                </div>
+                <div class="mb-3 text-muted">
+                    <small><strong>URL Signaling Server:</strong> {{ urlSignalingServer }}</small>
                 </div>
             </div>
             <div class="col-md-6">
                 <app-qr-code-wrapper [value]="qrCodeUrl" [class]="'qr-code'"></app-qr-code-wrapper>
             </div>
-
         </div>
     </div>
 

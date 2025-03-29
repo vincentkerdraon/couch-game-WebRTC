@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 import { generateSessionId, Role, SyncMessage } from '../definitions/network';
 import { WebRTCControllerService } from './web-rtc-controller.service';
 import { WebRTCHostService } from './web-rtc-host.service';
@@ -65,7 +66,7 @@ export class NetworkService {
     this.sessionId = sessionId;
     this.peerIdSelf = generateSessionId();
 
-    await this.websocketService.connect('ws://localhost:8080');
+    await this.websocketService.connect(environment.urlSignalingServer);
 
     this.webRTCControllerService.initialize((candidate) => {
       const sysMessage: SyncMessage = {
