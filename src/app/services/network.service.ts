@@ -25,10 +25,9 @@ export class NetworkService {
     this.role = role;
     this.sessionId = generateSessionId();
     this.peerIdHost = generateSessionId();
-    this.sessionId = "session1"; // FIXME
     this.peerIdSelf = this.peerIdHost;
 
-    this.websocketService.connect('ws://192.168.1.69:8080').then(() => {
+    this.websocketService.connect(environment.urlSignalingServer).then(() => {
       const initMessage: SyncMessage = { type: 'init', role: role, sessionId: this.sessionId, peerId: this.peerIdHost };
       this.websocketService.sendMessage(initMessage);
     });

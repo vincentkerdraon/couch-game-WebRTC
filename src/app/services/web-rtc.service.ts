@@ -50,6 +50,7 @@ export class WebRTCService {
 
     dataChannel.onerror = (error) => {
       console.error(`[${dataChannel.id}][${peerId}] Data channel error:`, error);
+      this.notificationService.showMessage('danger', `Data channel error: [${peerId}] ${error}`);
     };
     dataChannel.onopen = () => {
       console.log(`[${dataChannel.id}][${peerId}] Data channel is open`);

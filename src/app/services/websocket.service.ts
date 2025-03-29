@@ -16,6 +16,7 @@ export class WebSocketService {
 
       this.socket.onopen = () => {
         console.log('WebSocket connection opened');
+        this.notificationService.showMessage('info', 'Connected to signaling server');
         resolve();
       };
 
