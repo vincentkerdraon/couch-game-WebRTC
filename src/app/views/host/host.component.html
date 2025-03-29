@@ -10,7 +10,10 @@
                     <strong>Session ID:</strong> {{ networkService.sessionId }}
                 </div>
                 <div class="mb-3">
-                    <strong>Join:</strong> {{ qrCodeUrl }}
+                    <strong>Join:</strong>
+                    <span class="text-primary" style="cursor: pointer;" (click)="copyToClipboard(qrCodeUrl)">
+                        {{ qrCodeUrl }}
+                    </span>
                 </div>
                 <div class="mb-3 text-muted">
                     <small><strong>Peer ID Host:</strong> {{ networkService.peerIdHost }}</small>

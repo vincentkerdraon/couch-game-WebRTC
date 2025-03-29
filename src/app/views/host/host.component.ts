@@ -47,4 +47,12 @@ export class HostComponent {
     this.networkService.sendMessageToController(peerId, true, this.message);
     this.message = '';
   }
+
+  copyToClipboard(s: string) {
+    navigator.clipboard.writeText(s).then(() => {
+      console.log('copied to clipboard');
+    }).catch(err => {
+      console.error('Could not copy: ', err);
+    });
+  }
 }
