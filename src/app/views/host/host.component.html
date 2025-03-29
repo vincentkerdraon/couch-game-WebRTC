@@ -49,7 +49,7 @@
             <div *ngFor="let status of webrtcService.statuses" class="col-md-4 mb-3">
                 <div class="card shadow-sm">
                     <div class="card-body"
-                        [ngClass]="{'bg-success text-white': status.connectionStatus == 'connected'}">
+                        [ngClass]="{'bg-success text-white': status.connectionStatus == 'connected', 'bg-warning text-dark': status.connectionStatus == 'disconnected'}">
                         <h5 class="card-title">{{ status.peerId }}</h5>
                         <p class="card-text">
                             <strong>Status:</strong> {{ status.connectionStatus | json }}

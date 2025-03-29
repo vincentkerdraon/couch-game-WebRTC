@@ -8,7 +8,8 @@
             <span class="input-group-text">Session ID</span>
             <input [(ngModel)]="sessionId" id="sessionId" class="form-control" placeholder="Enter host session ID" />
         </div>
-        <button class="btn btn-success w-100" (click)="initController(this.sessionId)">
+        <button class="btn btn-success w-100" [disabled]="sessionId == null || sessionId == ''"
+            (click)="initController(sessionId)">
             Connect
         </button>
     </div>

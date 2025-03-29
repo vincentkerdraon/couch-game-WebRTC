@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ConnectionStatuses } from '../../definitions/network';
 import { NetworkService } from '../../services/network.service';
@@ -16,13 +17,18 @@ import { TrafficSendComponent } from "../traffic-send/traffic-send.component";
 })
 export class ControllerComponent {
   message: string = '';
-  sessionId: string = 'session1'; //FIXME
+  sessionId: string | null = null;
   lastMessage: string = '';
   status?: ConnectionStatuses;
   private subscriptionMessages: Subscription;
   private subscriptionConnectionStatuses: Subscription;
 
-  constructor(public networkService: NetworkService, private webrtcService: WebRTCService, private cdr: ChangeDetectorRef) {
+  constructor(public networkService: NetworkService, private webrtcService: WebRTCService, private cdr: ChangeDetectorRef, private route: ActivatedRoute) {
+    this.route.queryParamMap.subscribe((params) => {
+      this.sessionId = params.get('sessionId');
+      console.log('Detected sessionId:', this.sessionId);
+    });
+
     this.subscriptionMessages = webrtcService.messages$.subscribe((trafficData) => {
       if (!trafficData) {
         return
@@ -47,7 +53,10 @@ export class ControllerComponent {
     this.subscriptionConnectionStatuses.unsubscribe();
   }
 
-  async initController(sessionId: string): Promise<void> {
+  async initController(sessionId: string | null): Promise<void> {
+    if (!sessionId) {
+      throw new Error('Session ID is required');
+    }
     await this.networkService.initController(sessionId);
     this.networkService.sendOffer();
   }
