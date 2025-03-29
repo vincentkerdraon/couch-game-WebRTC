@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ConnectionStatus, ConnectionStatuses } from '../definitions/network';
+import { NotificationService } from './notification.service';
 import { WebRTCService } from './web-rtc.service';
 
 @Injectable({
@@ -9,7 +10,7 @@ export class WebRTCHostService {
   private peerConnections: Map<string, RTCPeerConnection> = new Map();
   private dataChannels: Map<string, RTCDataChannel> = new Map();
 
-  constructor(private webRTCService: WebRTCService) { }
+  constructor(private webRTCService: WebRTCService, public notificationService: NotificationService) { }
 
   initializeConnection(
     peerId: string,
@@ -25,6 +26,12 @@ export class WebRTCHostService {
       const connStatus: ConnectionStatuses = { connectionStatus: status, peerId: peerId };
       this.webRTCService.updateStatutes(connStatus);
       this.webRTCService.connectionStatuses$.next(connStatus);
+
+      if (status === 'connected') {
+        this.notificationService.showMessage('info', 'Connected to controller: ' + peerId);
+      } else if (status === 'disconnected') {
+        this.notificationService.showMessage('danger', 'Disconnected from controller: ' + peerId);
+      }
     };
 
     peerConnection.ondatachannel = (event) => {

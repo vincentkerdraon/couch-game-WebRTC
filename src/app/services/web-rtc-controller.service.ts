@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ConnectionStatus, ConnectionStatuses, controllerConnectionID } from '../definitions/network';
+import { NotificationService } from './notification.service';
 import { WebRTCService } from './web-rtc.service';
 
 @Injectable({
@@ -9,7 +10,7 @@ export class WebRTCControllerService {
   private peerConnection: RTCPeerConnection | null = null;
   private dataChannel: RTCDataChannel | null = null;
 
-  constructor(private webRTCService: WebRTCService) { }
+  constructor(private webRTCService: WebRTCService, public notificationService: NotificationService) { }
 
   initialize(iceCandidateCallback: (candidate: RTCIceCandidate) => void): void {
     console.log('Initializing WebRTCControllerService');
@@ -20,6 +21,12 @@ export class WebRTCControllerService {
       const connStatus: ConnectionStatuses = { connectionStatus: status, peerId: controllerConnectionID };
       this.webRTCService.updateStatutes(connStatus);
       this.webRTCService.connectionStatuses$.next(connStatus);
+
+      if (status === 'connected') {
+        this.notificationService.showMessage('info', 'Connected to host');
+      } else if (status === 'disconnected') {
+        this.notificationService.showMessage('danger', 'Disconnected from host');
+      }
     };
   }
 

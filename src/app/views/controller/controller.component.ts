@@ -5,7 +5,6 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ConnectionStatuses } from '../../definitions/network';
 import { NetworkService } from '../../services/network.service';
-import { NotificationService } from '../../services/notification.service';
 import { WebRTCService } from '../../services/web-rtc.service';
 import { TrafficReceiveComponent } from "../traffic-receive/traffic-receive.component";
 import { TrafficSendComponent } from "../traffic-send/traffic-send.component";
@@ -24,7 +23,7 @@ export class ControllerComponent {
   private subscriptionMessages: Subscription;
   private subscriptionConnectionStatuses: Subscription;
 
-  constructor(public networkService: NetworkService, private webrtcService: WebRTCService, private cdr: ChangeDetectorRef, private route: ActivatedRoute, public notificationService: NotificationService) {
+  constructor(public networkService: NetworkService, private webrtcService: WebRTCService, private cdr: ChangeDetectorRef, private route: ActivatedRoute,) {
     this.route.queryParamMap.subscribe((params) => {
       this.sessionId = params.get('sessionId');
       console.log('Detected sessionId:', this.sessionId);
@@ -46,11 +45,6 @@ export class ControllerComponent {
       console.log("ControllerComponent connectionStatuses status=", status);
       this.status = status;
       this.cdr.detectChanges();
-      if (status.connectionStatus === 'connected') {
-        this.notificationService.showMessage('info', 'Connected to host');
-      } else if (status.connectionStatus === 'disconnected') {
-        this.notificationService.showMessage('danger', 'Disconnected from host');
-      }
     });
   }
 

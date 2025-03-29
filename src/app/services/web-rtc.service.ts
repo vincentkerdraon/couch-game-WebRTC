@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ConnectionStatuses, ContentMessage, controllerConnectionID, timeNowTimestampSecond } from '../definitions/network';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class WebRTCService {
   public statuses: ConnectionStatuses[] = [];
 
 
-  constructor() { }
+  constructor(public notificationService: NotificationService) { }
 
   createPeerConnection(iceCb: (candidate: RTCIceCandidate) => void): RTCPeerConnection {
     console.log('createPeerConnection');

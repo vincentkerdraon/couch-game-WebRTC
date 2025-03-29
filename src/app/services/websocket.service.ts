@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SyncMessage } from '../definitions/network';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +8,7 @@ import { SyncMessage } from '../definitions/network';
 export class WebSocketService {
   private socket: WebSocket | null = null;
 
-  constructor() { }
+  constructor(public notificationService: NotificationService) { }
 
   connect(url: string): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -20,10 +21,12 @@ export class WebSocketService {
 
       this.socket.onclose = () => {
         console.log('WebSocket connection closed');
+        this.notificationService.showMessage('danger', 'Connection to signaling server closed');
       };
 
       this.socket.onerror = (error) => {
         console.error('WebSocket error:', error);
+        this.notificationService.showMessage('danger', 'Connection to signaling server error: ' + error);
         reject(error);
       };
     });
