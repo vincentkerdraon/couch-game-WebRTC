@@ -1,13 +1,27 @@
-<div *ngIf="dataReceivedLast10s.size > 0">
-    <h3>Test receive traffic</h3>
-    <ul>
-        <li *ngFor="let item of dataReceivedLast10s | keyvalue">
-            {{ item.key }}: {{ formatBytes(item.value/10) }} / s (last 10s)
-        </li>
-    </ul>
-    <ul>
-        <li *ngFor="let item of dataReceivedLast1min | keyvalue">
-            {{ item.key }}: {{ formatBytes(item.value/60) }} / s (last 1 minute)
-        </li>
-    </ul>
+<div *ngIf="dataReceivedLast10s.size > 0" class="card shadow-sm p-4 mt-4">
+    <h4 class="mb-3">📡 Traffic Received</h4>
+
+    <!-- Traffic Last 10 Seconds -->
+    <div>
+        <h6 class="mb-2">Last 10 Seconds</h6>
+        <ul class="list-group list-group-flush">
+            <li *ngFor="let item of dataReceivedLast10s | keyvalue"
+                class="list-group-item py-1 px-2 d-flex justify-content-between">
+                <span><strong>{{ item.key }}</strong></span>
+                <span>{{ formatBytes(item.value / 10) }} / s</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Traffic Last 1 Minute -->
+    <div class="mt-3">
+        <h6 class="mb-2">Last 1 Minute</h6>
+        <ul class="list-group list-group-flush">
+            <li *ngFor="let item of dataReceivedLast1min | keyvalue"
+                class="list-group-item py-1 px-2 d-flex justify-content-between">
+                <span><strong>{{ item.key }}</strong></span>
+                <span>{{ formatBytes(item.value / 60) }} / s</span>
+            </li>
+        </ul>
+    </div>
 </div>

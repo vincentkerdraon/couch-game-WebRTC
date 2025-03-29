@@ -1,33 +1,62 @@
-<div *ngIf="peerConnectedAtLeastOne">
-    <h3>Test send traffic</h3>
-    <div>
-        <label for="peerID">Peer ID:</label>
-        <select id="peerID" name="peerID" [(ngModel)]="peerId" (change)="update()">
-            <option *ngFor="let status of webrtcService.statuses" [value]="status.peerId">{{ status.peerId }}</option>
+<div *ngIf="peerConnectedAtLeastOne" class="card shadow-sm p-4 mt-4">
+    <h4 class="mb-3">🚀 Send Traffic</h4>
+
+    <!-- Peer Selection -->
+    <div class="mb-3 input-group">
+        <span class="input-group-text" id="peerIDLabel">Peer ID</span>
+        <select id="peerID" name="peerID" class="form-select" [(ngModel)]="peerId" (change)="update()"
+            aria-labelledby="peerIDLabel">
+            <option *ngFor="let status of webrtcService.statuses" [value]="status.peerId">
+                {{ status.peerId }}
+            </option>
         </select>
     </div>
-    <div *ngIf="!peerConnected">
-        <p>Peer {{ peerId }} not connected</p>
+
+    <!-- Peer Not Connected -->
+    <div *ngIf="!peerConnected" class="alert alert-danger py-2">
+        Peer <strong>{{ peerId }}</strong> not connected
     </div>
-    <div *ngIf="peerConnected">
-        <div>
-            <label for="bitsPerMessage">Bits per Message:</label>
-            <input type="number" id="bitsPerMessage" name="bitsPerMessage" placeholder="Enter bits per message"
-                [(ngModel)]="bitsPerMessage" (change)="update()">
+
+    <!-- Peer Connected -->
+    <div *ngIf="peerConnected" class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm p-2">
+                <div class="mb-3 input-group">
+                    <div class="input-group-prepend">
+                        <label for="bitsPerMessage" class="input-group-text">Bits per Message</label>
+                    </div>
+                    <input type="number" id="bitsPerMessage" name="bitsPerMessage" class="form-control"
+                        placeholder="Enter bits per message" [(ngModel)]="bitsPerMessage" (change)="update()" />
+                </div>
+                <div class="mb-3 input-group">
+                    <div class="input-group-prepend">
+                        <label for="messagesPerSecond" class="input-group-text">Messages per Second</label>
+                    </div>
+                    <input type="number" id="messagesPerSecond" name="messagesPerSecond" class="form-control"
+                        placeholder="Enter messages per second" [(ngModel)]="messagesPerSecond" (change)="update()" />
+                </div>
+                <div class="input-group mb-3 align-items-center">
+                    <div class="input-group-prepend">
+                        <label for="activated" class="input-group-text">
+                            Activated
+                        </label>
+                    </div>
+                    <div class="form-check ms-3">
+                        <input type="checkbox" id="activated" name="activated" class="form-check-input"
+                            [(ngModel)]="activated" (change)="update()" style="transform: scale(2);" />
+                    </div>
+                </div>
+            </div>
         </div>
-        <div>
-            <label for="messagesPerSecond">Messages per Second:</label>
-            <input type="number" id="messagesPerSecond" name="messagesPerSecond" placeholder="Enter messages per second"
-                [(ngModel)]="messagesPerSecond" (change)="update()">
-        </div>
-        <div>
-            <label for="activated">Activated:</label>
-            <input type="checkbox" id="activated" name="activated" [(ngModel)]="activated" (change)="update()">
-        </div>
-        <div>
-            <button (click)="testLatency()">Test Latency</button>
-            <div *ngIf="latencyMS!=0">
-                {{ latencyMS.toFixed(2) }} ms
+
+        <div class="col-md-6">
+            <div class="card shadow-sm p-2">
+                <button class="btn btn-primary w-100" (click)="testLatency()">Test Latency</button>
+                <div *ngIf="latencyMS != 0" class="mt-3 text-center">
+                    <div class="alert alert-info" role="alert">
+                        <strong>Latency:</strong> {{ latencyMS.toFixed(2) }} ms
+                    </div>
+                </div>
             </div>
         </div>
     </div>

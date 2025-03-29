@@ -1,29 +1,57 @@
-<h2>CONTROLLER</h2>
+<div class="container mt-4">
+    <h2 class="text-center text-primary mb-4">🎮 CONTROLLER</h2>
 
-<div *ngIf="!status">
-    <label for="sessionId">Session ID:</label>
-    <input [(ngModel)]="sessionId" id="sessionId" placeholder="Enter host session ID" />
-    <button (click)="initController(this.sessionId)">Connect</button>
-</div>
-
-<div *ngIf="status && status.connectionStatus!='connected'">
-    <p>disconnected</p>
-</div>
-
-<div *ngIf="status && status.connectionStatus=='connected'">
-    <h3>Session ID: {{ networkService.sessionId }}</h3>
-    <h3>Peer ID Self: {{ networkService.peerIdSelf }}</h3>
-    <h3>Peer ID Host: {{ networkService.peerIdHost }}</h3>
-    <h3>Send message</h3>
-    <div>
-        <input [(ngModel)]="message" placeholder="Enter message" />
-        <button (click)="sendMessage()">Send</button>
-    </div>
-    <div *ngIf="this.lastMessage">
-        <h3>Received message</h3>
-        <i>{{this.lastMessage}}</i>
+    <!-- Connection Section -->
+    <div *ngIf="!status" class="card shadow-sm p-4">
+        <h4 class="text-danger">Connect to Host</h4>
+        <div class="input-group mb-3">
+            <span class="input-group-text">Session ID</span>
+            <input [(ngModel)]="sessionId" id="sessionId" class="form-control" placeholder="Enter host session ID" />
+        </div>
+        <button class="btn btn-success w-100" (click)="initController(this.sessionId)">
+            Connect
+        </button>
     </div>
 
-    <app-traffic-receive></app-traffic-receive>
-    <app-traffic-send></app-traffic-send>
+    <!-- Disconnected Section -->
+    <div *ngIf="status && status.connectionStatus != 'connected'" class="alert alert-danger mt-4">
+        <p class="text-center mb-0">🚫 Disconnected</p>
+    </div>
+
+    <!-- Connected Section -->
+    <div *ngIf="status && status.connectionStatus == 'connected'">
+
+        <div class="card shadow-sm p-4 mt-4">
+            <h4 class="text-success">Session Information</h4>
+            <div class="mb-3">
+                <strong>Session ID:</strong> {{ networkService.sessionId }}
+            </div>
+            <div class="mb-3">
+                <strong>Peer ID Self:</strong> {{ networkService.peerIdSelf }}
+            </div>
+            <div class="mb-3">
+                <strong>Peer ID Host:</strong> {{ networkService.peerIdHost }} <span class="text-success">✅ </span>
+            </div>
+        </div>
+
+        <div class="card shadow-sm p-4 mt-4">
+            <div *ngIf="this.lastMessage">
+                <h4>📥 Received Message</h4>
+                <div class="alert alert-info">
+                    <i>{{ this.lastMessage }}</i>
+                </div>
+            </div>
+            <div>
+                <h4>📤 Send Message</h4>
+                <div class="input-group mb-3">
+                    <input [(ngModel)]="message" class="form-control" placeholder="Enter message" />
+                    <button class="btn btn-primary" (click)="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+
+
+        <app-traffic-send></app-traffic-send>
+        <app-traffic-receive></app-traffic-receive>
+    </div>
 </div>

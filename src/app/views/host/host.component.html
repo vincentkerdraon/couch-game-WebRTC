@@ -1,27 +1,64 @@
-<h2>HOST</h2>
+<div class="container mt-4">
+    <h2 class="text-center text-primary mb-4">📺 HOST</h2>
 
-<h3>Session ID: {{ networkService.sessionId }}</h3>
-<h3>Peer ID Host: {{ networkService.peerIdHost }}</h3>
-<div *ngIf="this.webrtcService.statuses.length > 0">
-    <h3>Peers</h3>
-    <ul>
-        <li *ngFor="let status of webrtcService.statuses">
-            <span>{{ status.peerId }}: {{status.connectionStatus|json}} </span>
-        </li>
-    </ul>
+    <!-- Host Information -->
+    <div class="card shadow-sm p-4">
+        <h4 class="text-success">Host Information</h4>
+        <div class="mb-3">
+            <strong>Session ID:</strong> {{ networkService.sessionId }}
+        </div>
+        <div class="mb-3">
+            <strong>Peer ID Host:</strong> {{ networkService.peerIdHost }}
+        </div>
+    </div>
 
-    <h3>Send message</h3>
-    <input [(ngModel)]="message" placeholder="Enter message" />
-    <span *ngFor="let status of webrtcService.statuses">
-        <button *ngIf="status.connectionStatus=='connected'" (click)="sendMessage(status.peerId)">Send to {{
-            status.peerId
-            }}</button>
-    </span>
+    <!-- Received Message Section -->
+    <div *ngIf="this.lastMessage || this.webrtcService.statuses.length > 0" class="card shadow-sm p-4 mt-4">
+        <div *ngIf="this.lastMessage">
+            <h4>📥 Received Message</h4>
+            <div class="alert alert-info">
+                <i>{{ this.lastMessage }}</i>
+            </div>
+        </div>
+
+        <!-- Send Message Section -->
+        <div *ngIf="this.webrtcService.statuses.length > 0">
+            <h4>📤 Prepare Message</h4>
+            <div class="input-group">
+                <input [(ngModel)]="message" class="form-control" placeholder="Enter message" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Peers Section -->
+    <div *ngIf="this.webrtcService.statuses.length > 0" class="card shadow-sm p-4 mt-4">
+        <h4 class="">Connected Peers</h4>
+        <div class="row">
+            <div *ngFor="let status of webrtcService.statuses" class="col-md-4 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body"
+                        [ngClass]="{'bg-success text-white': status.connectionStatus == 'connected'}">
+                        <h5 class="card-title">{{ status.peerId }}</h5>
+                        <p class="card-text">
+                            <strong>Status:</strong> {{ status.connectionStatus | json }}
+                        </p>
+                        <button *ngIf="status.connectionStatus == 'connected'" class="btn btn-primary btn-sm"
+                            (click)="sendMessage(status.peerId)">
+                            Send Message
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- Traffic Components -->
+    <div class="mt-4">
+        <app-traffic-send></app-traffic-send>
+        <app-traffic-receive></app-traffic-receive>
+    </div>
 </div>
-<div *ngIf="this.lastMessage">
-    <h3>Received message</h3>
-    <i>{{this.lastMessage}}</i>
-</div>
-
-<app-traffic-receive></app-traffic-receive>
-<app-traffic-send></app-traffic-send>
