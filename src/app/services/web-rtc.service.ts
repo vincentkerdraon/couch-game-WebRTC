@@ -63,6 +63,11 @@ export class WebRTCService {
         const latencyValue = s.split(".testLatencyPing=")[1];
         this.sendMessage(dataChannel, ".testLatencyPong=" + latencyValue);
       }
+      //special demo case, message
+      if (!s.startsWith(".")) {
+        this.notificationService.showMessage('info', "📥 " + s)
+      }
+
       this.messages$.next({ from: peerId, timestamp: timeNowTimestampSecond(), content: s });
     };
     dataChannel.onclose = () => {
