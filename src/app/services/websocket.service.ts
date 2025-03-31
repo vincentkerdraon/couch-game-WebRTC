@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { SyncMessage } from '../definitions/network';
 import { NotificationService } from './notification.service';
 
+//FIXME show connection state
+
 @Injectable({
   providedIn: 'root'
 })

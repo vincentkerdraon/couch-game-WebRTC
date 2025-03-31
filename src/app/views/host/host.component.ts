@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -27,7 +27,7 @@ export class HostComponent {
   qrCodeUrl: string = ''
   urlSignalingServer: string = environment.urlSignalingServer;
 
-  constructor(public networkService: NetworkService, public webrtcService: WebRTCService) {
+  constructor(public networkService: NetworkService, public webrtcService: WebRTCService, private cdr: ChangeDetectorRef) {
     this.networkService.initHost();
     this.qrCodeUrl = environment.urlSelf + `/controller?sessionId=${this.networkService.sessionId}`;
 
@@ -48,6 +48,7 @@ export class HostComponent {
   sendMessage(peerId: string): void {
     this.networkService.sendMessageToController(peerId, true, this.message);
     this.message = '';
+    this.cdr.detectChanges();
   }
 
   copyToClipboard(s: string) {

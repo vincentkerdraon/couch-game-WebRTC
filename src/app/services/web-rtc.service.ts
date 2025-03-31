@@ -9,7 +9,7 @@ import { NotificationService } from './notification.service';
 export class WebRTCService {
   private pendingCandidates: Map<string, RTCIceCandidateInit[]> = new Map();
 
-  //FIXME temporary for demo
+  //TODO temporary for demo
   public messages$: Subject<ContentMessage> = new Subject<ContentMessage>();
   public connectionStatuses$: Subject<ConnectionStatuses> = new Subject<ConnectionStatuses>();
   public statuses: ConnectionStatuses[] = [];

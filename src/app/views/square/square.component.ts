@@ -32,8 +32,8 @@ export class SquareComponent {
         this.decode(trafficData.content);
       }
       if (!trafficData.content.startsWith(".") && !trafficData.content.includes("/.;")) {
-        this.lastMessage = trafficData.content;
-        if (this.lastMessage.startsWith(this.clientName + "/")) {
+        if (trafficData.content.startsWith(this.clientName + "/")) {
+          this.lastMessage = trafficData.content;
           this.lastMessage = this.lastMessage.substring(this.clientName.length + 1);
         }
       }

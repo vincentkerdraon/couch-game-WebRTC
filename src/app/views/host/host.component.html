@@ -1,9 +1,8 @@
 <div class="container mt-4">
     <h2 class="text-center text-primary mb-4">📺 HOST</h2>
 
-    <!-- Host Information -->
     <div class="card shadow-sm p-4">
-        <h4 class="text-success">Host Information</h4>
+        <h4 class="text-success">🛜 Host Information</h4>
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-3">
@@ -55,9 +54,9 @@
 
     <!-- Peers Section -->
     <div *ngIf="this.webrtcService.statuses.length > 0" class="card shadow-sm p-4 mt-4">
-        <h4 class="">Connected Peers</h4>
+        <h4 class="">👫 Connected Peers</h4>
         <div class="row">
-            <div *ngFor="let status of webrtcService.statuses" class="col-md-4 mb-3">
+            <div *ngFor="let status of webrtcService.statuses" class="col-12 col-sm-6 col-md-4 mb-3">
                 <div class="card shadow-sm">
                     <div class="card-body"
                         [ngClass]="{'bg-success text-white': status.connectionStatus == 'connected', 'bg-warning text-dark': status.connectionStatus == 'disconnected'}">
@@ -72,7 +71,11 @@
 
                         <app-square *ngIf="status.connectionStatus == 'connected'"
                             [clientName]="status.peerId"></app-square>
-                        <app-square-control [peerIdSelf]="peerId" [peerIdTo]="status.peerId"></app-square-control>
+
+
+                        <div class="card shadow-sm p-4 mt-4">
+                            <app-square-control [peerIdSelf]="peerId" [peerIdTo]="status.peerId"></app-square-control>
+                        </div>
                     </div>
                 </div>
             </div>

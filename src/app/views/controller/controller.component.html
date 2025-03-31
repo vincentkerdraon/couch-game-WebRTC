@@ -26,11 +26,10 @@
     <!-- Connected Section -->
     <div *ngIf="status && status.connectionStatus == 'connected'">
         <app-square [clientName]="networkService.peerIdHost"></app-square>
-        <app-square-control [peerIdSelf]="networkService.peerIdSelf"
-            [peerIdTo]="networkService.peerIdHost"></app-square-control>
+
 
         <div class="card shadow-sm p-4 mt-4">
-            <h4 class="text-success">Session Information</h4>
+            <h4 class="text-success">🛜 Session Information</h4>
             <div class="mb-3">
                 <strong>Session ID:</strong> {{ networkService.sessionId }}
             </div>
@@ -40,6 +39,9 @@
             <div class="mb-3 text-muted">
                 <small> <strong>Peer ID Host:</strong> {{ networkService.peerIdHost }} <span class="text-success">✅
                     </span></small>
+            </div>
+            <div class="mb-3 text-muted">
+                <small><strong>URL Signaling Server:</strong> {{ urlSignalingServer }}</small>
             </div>
         </div>
 
@@ -57,6 +59,12 @@
                     <button class="btn btn-primary" (click)="sendMessage()">Send</button>
                 </div>
             </div>
+        </div>
+
+
+        <div class="card shadow-sm p-4 mt-4">
+            <app-square-control [peerIdSelf]="networkService.peerIdSelf"
+                [peerIdTo]="networkService.peerIdHost"></app-square-control>
         </div>
 
 

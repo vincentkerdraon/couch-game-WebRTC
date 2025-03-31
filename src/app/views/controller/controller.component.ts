@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { ConnectionStatuses } from '../../definitions/network';
 import { NetworkService } from '../../services/network.service';
 import { WebRTCService } from '../../services/web-rtc.service';
@@ -24,6 +25,7 @@ export class ControllerComponent {
   status?: ConnectionStatuses;
   private subscriptionMessages: Subscription;
   private subscriptionConnectionStatuses: Subscription;
+  urlSignalingServer: string = environment.urlSignalingServer;
 
   constructor(public networkService: NetworkService, private webrtcService: WebRTCService, private cdr: ChangeDetectorRef, private route: ActivatedRoute,) {
     this.route.queryParamMap.subscribe((params) => {
@@ -66,5 +68,6 @@ export class ControllerComponent {
   sendMessage(): void {
     this.networkService.sendMessageToHost(true, this.message);
     this.message = '';
+    this.cdr.detectChanges();
   }
 }

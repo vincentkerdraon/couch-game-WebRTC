@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NetworkService } from '../../services/network.service';
 import { WebRTCControllerService } from '../../services/web-rtc-controller.service';
@@ -16,7 +16,7 @@ import { WebRTCService } from '../../services/web-rtc.service';
 export class SquareControlComponent implements OnDestroy {
   @Input() peerIdSelf: string = 'Client Name';
   @Input() peerIdTo: string = 'Client Name';
-  color: string = '#3498db';
+  color: string = '#c864c8';
   visible: boolean = false;
   data: string = '';
 
@@ -32,7 +32,8 @@ export class SquareControlComponent implements OnDestroy {
     private webrtcService: WebRTCService,
     private webRTCControllerService: WebRTCControllerService,
     private webRTCHostService: WebRTCHostService,
-    private networkService: NetworkService
+    private networkService: NetworkService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   startJoystick(event: MouseEvent | TouchEvent): void {
@@ -106,6 +107,7 @@ export class SquareControlComponent implements OnDestroy {
   }
 
   update(dx: number, dy: number): void {
+    this.cdr.detectChanges();
     this.data = `.;${this.peerIdSelf};${this.color};${dx};${dy};${this.visible ? '1' : '0'}`;
 
     if (this.networkService.role === 'Host') {
