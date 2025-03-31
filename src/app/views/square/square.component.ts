@@ -16,10 +16,12 @@ export class SquareComponent {
   @Input() clientName: string = 'Client Name';
   lastMessage: string = '';
   color: string = '#3498db';
-  position: { x: number; y: number } = { x: 600, y: 200 };
+  positionCurrent: { x: number; y: number } = { x: 600, y: 200 };
+  positionTarget: { x: number; y: number } = this.positionCurrent;
+  positionDelta: { x: number; y: number } = { x: 0, y: 0 };
   visible: boolean = false;
 
-  constrainedPosition: { x: number; y: number } = { x: 0, y: 0 };
+  private animationFrameId: number | null = null;
 
   constructor(
     private webrtcService: WebRTCService,
@@ -48,7 +50,6 @@ export class SquareComponent {
       }
     });
   }
-
   decode(data: string) {
     // Example: `.;{clientId};#112233;10;10;1`
     const parts = data.split(';');
@@ -65,29 +66,54 @@ export class SquareComponent {
       const squareWidth = 100; // Adjust based on the square's width
       const squareHeight = 100; // Adjust based on the square's height
 
-      // Update and constrain the x position
-      const newX = this.position.x + parseInt(parts[3], 10);
-      this.constrainedPosition.x = Math.min(
+      const newX = this.positionCurrent.x + parseInt(parts[3], 10);
+      this.positionTarget.x = Math.min(
         Math.max(newX, 0),
-        screenWidth - squareWidth - 20
+        screenWidth - squareWidth - 15
       );
-
-      // Update and constrain the y position
-      const newY = this.position.y + parseInt(parts[4], 10);
-      this.constrainedPosition.y = Math.min(
+      const newY = this.positionCurrent.y + parseInt(parts[4], 10);
+      this.positionTarget.y = Math.min(
         Math.max(newY, 0),
         screenHeight - squareHeight
       );
 
-      // Update the position to the constrained values
-      this.position.x = this.constrainedPosition.x;
-      this.position.y = this.constrainedPosition.y;
+      // Smoothly update the position using requestAnimationFrame
+      this.animatePosition();
 
       // Update visibility
       this.visible = parts[5] === '1';
 
       // Trigger change detection to update the UI
-      this.cdr.detectChanges();
+      this.cdr.detectChanges(); //FIXME not needed with requestAnimationFrame
     }
+  }
+
+  private animatePosition(): void {
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
+
+    const step = () => {
+      const smoothness = 0.2;
+      this.positionDelta.x = (this.positionTarget.x - this.positionCurrent.x) * smoothness;
+      this.positionDelta.y = (this.positionTarget.y - this.positionCurrent.y) * smoothness;
+
+      this.positionCurrent.x += this.positionDelta.x;
+      this.positionCurrent.y += this.positionDelta.y;
+
+      // console.log(`Animating square from to delta position:\n`, this.positionCurrent, this.positionTarget, this.positionDelta);
+
+      // If the square is close enough to the target, stop animating
+      if (Math.abs(this.positionDelta.x) < 1 && Math.abs(this.positionDelta.y) < 1) {
+        this.positionCurrent.x = this.positionTarget.x;
+        this.positionCurrent.y = this.positionTarget.y;
+        return;
+      }
+
+      // Request the next animation frame
+      this.animationFrameId = requestAnimationFrame(step);
+    };
+
+    step();
   }
 }

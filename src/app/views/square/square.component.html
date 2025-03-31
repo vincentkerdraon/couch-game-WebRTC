@@ -1,8 +1,9 @@
 <div *ngIf="visible" class="square position-fixed d-flex flex-column justify-content-center align-items-center shadow"
     [ngStyle]="{
         'background-color': color,
-        'left.px': constrainedPosition.x,
-        'top.px': constrainedPosition.y
+        'top': positionCurrent.y + 'px',
+        'left': positionCurrent.x + 'px',
+        'transform': 'translate(' + positionDelta.x + 'px, ' + positionDelta.y + 'px)'
     }">
     <div class="square-content text-center">
         <p class="client-name fw-bold mb-1">

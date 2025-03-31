@@ -109,8 +109,8 @@ export class SquareControlComponent implements OnDestroy {
     };
 
     // Update the last movement values
-    this.lastDx = Math.round(limitedX / 10);
-    this.lastDy = Math.round(limitedY / 10);
+    this.lastDx = Math.round(limitedX / 5);
+    this.lastDy = Math.round(limitedY / 5);
 
 
     // Emit movement data
