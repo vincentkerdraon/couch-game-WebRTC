@@ -4,7 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { NetworkService } from '../../services/network.service';
+import { NotificationService } from '../../services/notification.service';
 import { WebRTCService } from '../../services/web-rtc.service';
+import { WebSocketService } from '../../services/websocket.service';
 import { QRCodeWrapperComponent } from '../qr-code-wrapper/qr-code-wrapper.component';
 import { SquareControlComponent } from "../square-control/square-control.component";
 import { SquareComponent } from "../square/square.component";
@@ -27,7 +29,7 @@ export class HostComponent {
   qrCodeUrl: string = ''
   urlSignalingServer: string = environment.urlSignalingServer;
 
-  constructor(public networkService: NetworkService, public webrtcService: WebRTCService, private cdr: ChangeDetectorRef) {
+  constructor(public networkService: NetworkService, public webrtcService: WebRTCService, private cdr: ChangeDetectorRef, public websocketService: WebSocketService, private notificationService: NotificationService) {
     this.networkService.initHost();
     this.qrCodeUrl = environment.urlSelf + `/controller?sessionId=${this.networkService.sessionId}`;
 
@@ -52,6 +54,7 @@ export class HostComponent {
   }
 
   copyToClipboard(s: string) {
+    this.notificationService.showMessage('info', 'Copied to clipboard');
     navigator.clipboard.writeText(s).then(() => {
       console.log('copied to clipboard');
     }).catch(err => {

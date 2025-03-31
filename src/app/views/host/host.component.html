@@ -7,25 +7,27 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <strong>Session ID:</strong>
-                    📋 <span class="text-primary" style="cursor: pointer;"
-                        (click)="copyToClipboard(networkService.sessionId)">
+                    📋 <span style="cursor: pointer;" (click)="copyToClipboard(networkService.sessionId)">
                         {{ networkService.sessionId }}
                     </span>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3 text-muted" *ngIf="websocketService.isConnected">
                     <strong>Join:</strong>
-                    📋 <span class="text-primary" style="cursor: pointer;" (click)="copyToClipboard(qrCodeUrl)">
-                        {{ qrCodeUrl }}
-                    </span>
+                    <span style="cursor: pointer;" (click)="copyToClipboard(qrCodeUrl)"> 📋 {{ qrCodeUrl }}</span>
                 </div>
                 <div class="mb-3 text-muted">
                     <small><strong>Peer ID Host:</strong> {{ networkService.peerIdHost }}</small>
                 </div>
                 <div class="mb-3 text-muted">
-                    <small><strong>URL Signaling Server:</strong> {{ urlSignalingServer }}</small>
+                    <small><strong>Signaling Server:</strong> {{ urlSignalingServer }}
+                        {{websocketService.isConnected ? '✅' : '⛔'}} <br />
+                        <i>(Only important for initial connection)</i> <br />
+                        <button *ngIf="websocketService.isConnected" class="btn btn-danger btn-sm"
+                            (click)="websocketService.close()">Disconnect</button>
+                    </small>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6" *ngIf="websocketService.isConnected">
                 <app-qr-code-wrapper [value]="qrCodeUrl" [class]="'qr-code'"></app-qr-code-wrapper>
             </div>
         </div>

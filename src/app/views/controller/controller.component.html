@@ -41,7 +41,12 @@
                     </span></small>
             </div>
             <div class="mb-3 text-muted">
-                <small><strong>URL Signaling Server:</strong> {{ urlSignalingServer }}</small>
+                <small><strong>Signaling Server:</strong> {{ urlSignalingServer }}
+                    {{websocketService.isConnected ? '✅' : '⛔'}} <br />
+                    <i>(Only important for initial connection)</i> <br />
+                    <button *ngIf="websocketService.isConnected" class="btn btn-danger btn-sm"
+                        (click)="websocketService.close()">Disconnect</button>
+                </small>
             </div>
         </div>
 

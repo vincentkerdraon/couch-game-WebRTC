@@ -2,13 +2,12 @@ import { Injectable } from '@angular/core';
 import { SyncMessage } from '../definitions/network';
 import { NotificationService } from './notification.service';
 
-//FIXME show connection state
-
 @Injectable({
   providedIn: 'root'
 })
 export class WebSocketService {
   private socket: WebSocket | null = null;
+  public isConnected: boolean = false;
 
   constructor(public notificationService: NotificationService) { }
 
@@ -17,12 +16,14 @@ export class WebSocketService {
       this.socket = new WebSocket(url);
 
       this.socket.onopen = () => {
+        this.isConnected = true;
         console.log('WebSocket connection opened');
         this.notificationService.showMessage('info', 'Connected to signaling server');
         resolve();
       };
 
       this.socket.onclose = () => {
+        this.isConnected = false;
         console.log('WebSocket connection closed');
         this.notificationService.showMessage('danger', 'Connection to signaling server closed');
       };

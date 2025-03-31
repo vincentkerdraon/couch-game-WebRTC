@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import { ConnectionStatuses } from '../../definitions/network';
 import { NetworkService } from '../../services/network.service';
 import { WebRTCService } from '../../services/web-rtc.service';
+import { WebSocketService } from '../../services/websocket.service';
 import { SquareControlComponent } from "../square-control/square-control.component";
 import { SquareComponent } from "../square/square.component";
 import { TrafficReceiveComponent } from "../traffic-receive/traffic-receive.component";
@@ -27,7 +28,7 @@ export class ControllerComponent {
   private subscriptionConnectionStatuses: Subscription;
   urlSignalingServer: string = environment.urlSignalingServer;
 
-  constructor(public networkService: NetworkService, private webrtcService: WebRTCService, private cdr: ChangeDetectorRef, private route: ActivatedRoute,) {
+  constructor(public networkService: NetworkService, private webrtcService: WebRTCService, private cdr: ChangeDetectorRef, private route: ActivatedRoute, public websocketService: WebSocketService) {
     this.route.queryParamMap.subscribe((params) => {
       this.sessionId = params.get('sessionId');
       console.log('Detected sessionId:', this.sessionId);
