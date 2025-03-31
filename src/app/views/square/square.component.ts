@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { NetworkService } from '../../services/network.service';
 import { WebRTCService } from '../../services/web-rtc.service';
 
@@ -17,13 +17,19 @@ export class SquareComponent {
   position: { x: number; y: number } = { x: 600, y: 200 };
   visible: boolean = false;
 
-  constructor(private webrtcService: WebRTCService, private networkService: NetworkService) {
+  constrainedPosition: { x: number; y: number } = { x: 0, y: 0 };
+
+  constructor(
+    private webrtcService: WebRTCService,
+    private networkService: NetworkService,
+    private cdr: ChangeDetectorRef
+  ) {
     this.webrtcService.messages$.subscribe((trafficData) => {
       if (!trafficData) {
         return;
       }
       if (trafficData.content.includes(".;")) {
-        this.decode(trafficData.content)
+        this.decode(trafficData.content);
       }
       if (!trafficData.content.startsWith(".") && !trafficData.content.includes("/.;")) {
         this.lastMessage = trafficData.content;
@@ -35,20 +41,44 @@ export class SquareComponent {
   }
 
   decode(data: string) {
-    //example: `.;fimqmkrvj;#112233;10;10;1`
+    // Example: `.;fimqmkrvj;#112233;10;10;1`
     const parts = data.split(';');
-    if (parts.length == 6) {
-      if (this.networkService.role == "Host" && this.clientName != parts[1]) {
+    if (parts.length === 6) {
+      if (this.networkService.role === 'Host' && this.clientName !== parts[1]) {
         return;
       }
+
       this.color = parts[2];
+
+      // Constrain the position to keep the square visible on the screen
       const screenWidth = window.innerWidth;
-      this.position.x = Math.min(this.position.x + parseInt(parts[3]), screenWidth - 120);
-      this.position.x = Math.max(this.position.x, 0);
       const screenHeight = window.innerHeight;
-      this.position.y = Math.min(this.position.y + parseInt(parts[4]), screenHeight - 100);
-      this.position.y = Math.max(this.position.y, 0);
+      const squareWidth = 100; // Adjust based on the square's width
+      const squareHeight = 100; // Adjust based on the square's height
+
+      // Update and constrain the x position
+      const newX = this.position.x + parseInt(parts[3], 10);
+      this.constrainedPosition.x = Math.min(
+        Math.max(newX, 0),
+        screenWidth - squareWidth - 20
+      );
+
+      // Update and constrain the y position
+      const newY = this.position.y + parseInt(parts[4], 10);
+      this.constrainedPosition.y = Math.min(
+        Math.max(newY, 0),
+        screenHeight - squareHeight
+      );
+
+      // Update the position to the constrained values
+      this.position.x = this.constrainedPosition.x;
+      this.position.y = this.constrainedPosition.y;
+
+      // Update visibility
       this.visible = parts[5] === '1';
+
+      // Trigger change detection to update the UI
+      this.cdr.detectChanges();
     }
   }
 }

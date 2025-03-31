@@ -3,9 +3,9 @@
     height: 100px;
     border-radius: 15px;
     opacity: 0.9;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.1s ease-in-out;
     z-index: 1000;
-    /* Ensures it stays on top of everything */
+    pointer-events: none;
 }
 
 .square-content {

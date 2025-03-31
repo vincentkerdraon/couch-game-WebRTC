@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NetworkService } from '../../services/network.service';
 import { WebRTCControllerService } from '../../services/web-rtc-controller.service';
@@ -13,7 +13,7 @@ import { WebRTCService } from '../../services/web-rtc.service';
   imports: [CommonModule, FormsModule],
   standalone: true
 })
-export class SquareControlComponent {
+export class SquareControlComponent implements OnDestroy {
   @Input() peerIdSelf: string = 'Client Name';
   @Input() peerIdTo: string = 'Client Name';
   color: string = '#3498db';
@@ -23,6 +23,10 @@ export class SquareControlComponent {
   joystickActive = false;
   joystickCenter = { x: 50, y: 50 }; // Center of the joystick (relative to its container)
   joystickHandleStyle = { left: '50%', top: '50%' }; // Initial position of the joystick handle
+
+  private lastDx = 0;
+  private lastDy = 0;
+  private intervalId: any = null;
 
   constructor(
     private webrtcService: WebRTCService,
@@ -34,12 +38,27 @@ export class SquareControlComponent {
   startJoystick(event: MouseEvent | TouchEvent): void {
     this.joystickActive = true;
     event.preventDefault();
+
+    // Start sending repeated input every 10ms
+    if (!this.intervalId) {
+      this.intervalId = setInterval(() => {
+        if (this.joystickActive) {
+          this.update(this.lastDx, this.lastDy);
+        }
+      }, 10);
+    }
   }
 
   stopJoystick(): void {
     this.joystickActive = false;
     this.joystickHandleStyle = { left: '50%', top: '50%' }; // Reset handle to center
     this.update(0, 0); // Stop movement
+
+    // Stop the interval
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
   }
 
   moveJoystick(event: MouseEvent | TouchEvent): void {
@@ -78,8 +97,12 @@ export class SquareControlComponent {
       top: `${50 + (limitedY / rect.height) * 100}%`
     };
 
+    // Update the last movement values
+    this.lastDx = Math.round(limitedX) / 10;
+    this.lastDy = Math.round(limitedY) / 10;
+
     // Emit movement data
-    this.update(Math.round(limitedX), Math.round(limitedY));
+    this.update(this.lastDx, this.lastDy);
   }
 
   update(dx: number, dy: number): void {
@@ -89,6 +112,13 @@ export class SquareControlComponent {
       this.webRTCHostService.sendMessage(this.peerIdTo, this.data);
     } else if (this.networkService.role === 'Controller') {
       this.webRTCControllerService.sendMessage(this.data);
+    }
+  }
+
+  ngOnDestroy(): void {
+    // Clean up the interval when the component is destroyed
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
     }
   }
 }
