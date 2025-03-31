@@ -36,6 +36,22 @@ CouchGameWebRTC is a multiplayer application that uses **WebRTC** for real-time 
 ng build --configuration production
 ```
 
+## Run Locally
+
+1. **Start the Signaling Server**  
+    ```bash
+    node server.js
+    ```
+
+2. **Verify Signaling Server Port**  
+    Ensure the signaling server port is correctly configured in `src/environments/environment.ts`.
+
+3. **Run the Angular Application**  
+    Start the Angular app, making it accessible to any device on the network:  
+    ```bash
+    ng serve --host 0.0.0.0 --disable-host-check
+    ```
+
 ## Debugging
 
 Use `chrome://webrtc-internals/` to debug WebRTC connections.
