@@ -40,7 +40,7 @@ ng build --configuration production
 
 1. **Start the Signaling Server**  
     ```bash
-    node server.js
+    node server-signaling.js
     ```
 
 2. **Verify Signaling Server Port**  
