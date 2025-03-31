@@ -1,5 +1,5 @@
 export const environment = {
     production: true,
-    urlSignalingServer: 'wss://prod-signaling-server.com',
-    urlSelf: 'https://prod-app.com'
+    urlSignalingServer: 'ws://192.168.1.77:8021',
+    urlSelf: 'http://192.168.1.77:8020'
 };

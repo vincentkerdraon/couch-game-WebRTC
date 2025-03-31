@@ -1,6 +1,8 @@
+//this is draft code, only use for the POC.
+
 const WebSocket = require( 'ws' )
 
-const wss = new WebSocket.Server( { port: 8080 } )
+const wss = new WebSocket.Server( { port: 8021 } )
 
 // Store sessions and their associated clients
 const sessions = new Map()
@@ -45,7 +47,7 @@ wss.on( 'connection', ( ws ) => {
     } )
 } )
 
-console.log( 'WebSocket server is running on ws://localhost:8080' )
+console.log( 'WebSocket server is running on ws://0.0.0.0:8021' )
 
 // Handle initialization messages for the host
 function handleInit ( ws, role, sessionId, peerIdFrom ) {
