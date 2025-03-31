@@ -6,8 +6,7 @@ import { WebRTCControllerService } from '../../services/web-rtc-controller.servi
 import { WebRTCHostService } from '../../services/web-rtc-host.service';
 import { WebRTCService } from '../../services/web-rtc.service';
 
-
-const updateIntervalMs: number = 5;
+const updateIntervalMs: number = 10;
 
 @Component({
   selector: 'app-square-control',

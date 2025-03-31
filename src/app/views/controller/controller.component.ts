@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ConnectionStatuses } from '../../definitions/network';
 import { NetworkService } from '../../services/network.service';
+import { WakeLockService } from '../../services/wake-lock.service';
 import { WebRTCService } from '../../services/web-rtc.service';
 import { WebSocketService } from '../../services/websocket.service';
 import { SquareControlComponent } from "../square-control/square-control.component";
@@ -17,9 +18,9 @@ import { TrafficSendComponent } from "../traffic-send/traffic-send.component";
   selector: 'app-controller',
   imports: [CommonModule, FormsModule, TrafficReceiveComponent, TrafficSendComponent, SquareComponent, SquareControlComponent],
   templateUrl: './controller.component.html',
-  styleUrl: './controller.component.scss'
 })
-export class ControllerComponent {
+
+export class ControllerComponent implements OnInit, OnDestroy {
   message: string = '';
   sessionId: string | null = null;
   lastMessage: string = '';
@@ -28,7 +29,7 @@ export class ControllerComponent {
   private subscriptionConnectionStatuses: Subscription;
   urlSignalingServer: string = environment.urlSignalingServer;
 
-  constructor(public networkService: NetworkService, private webrtcService: WebRTCService, private cdr: ChangeDetectorRef, private route: ActivatedRoute, public websocketService: WebSocketService) {
+  constructor(public networkService: NetworkService, private webrtcService: WebRTCService, private cdr: ChangeDetectorRef, private route: ActivatedRoute, public websocketService: WebSocketService, private wakeLockService: WakeLockService) {
     this.route.queryParamMap.subscribe((params) => {
       this.sessionId = params.get('sessionId');
       console.log('Detected sessionId:', this.sessionId);
@@ -53,9 +54,14 @@ export class ControllerComponent {
     });
   }
 
+  ngOnInit(): void {
+    this.wakeLockService.requestWakeLock();
+  }
+
   ngOnDestroy() {
     this.subscriptionMessages.unsubscribe();
     this.subscriptionConnectionStatuses.unsubscribe();
+    this.wakeLockService.releaseWakeLock();
   }
 
   async initController(sessionId: string | null): Promise<void> {

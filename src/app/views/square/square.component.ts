@@ -3,6 +3,8 @@ import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { NetworkService } from '../../services/network.service';
 import { WebRTCService } from '../../services/web-rtc.service';
 
+const updateIntervalMs: number = 5;
+
 @Component({
   selector: 'app-square',
   templateUrl: './square.component.html',
@@ -24,11 +26,18 @@ export class SquareComponent {
     private networkService: NetworkService,
     private cdr: ChangeDetectorRef
   ) {
+    let lastProcessedTime = 0;
+
     this.webrtcService.messages$.subscribe((trafficData) => {
       if (!trafficData) {
         return;
       }
       if (trafficData.content.includes(".;")) {
+        const currentTime = Date.now();
+        if (currentTime - lastProcessedTime < updateIntervalMs) {
+          return; // Drop messages
+        }
+        lastProcessedTime = currentTime;
         this.decode(trafficData.content);
       }
       if (!trafficData.content.startsWith(".") && !trafficData.content.includes("/.;")) {
