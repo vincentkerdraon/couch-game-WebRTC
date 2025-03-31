@@ -70,7 +70,15 @@ export class SquareControlComponent implements OnDestroy {
     }
 
     const container = (event.target as HTMLElement).closest('.joystick') as HTMLElement;
-    const rect = container.getBoundingClientRect();
+
+    let rect: DOMRect;
+    try {
+      rect = container.getBoundingClientRect();
+    } catch (error) {
+      //ignore this error
+      return;
+    }
+
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
 
