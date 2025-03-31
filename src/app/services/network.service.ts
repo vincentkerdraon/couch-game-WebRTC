@@ -23,8 +23,9 @@ export class NetworkService {
   initHost(): void {
     let role: Role = 'Host';
     this.role = role;
-    this.sessionId = generateSessionId();
-    this.peerIdHost = generateSessionId();
+    const { sessionId, peerIdHost } = this.prepareIds();
+    this.sessionId = sessionId;
+    this.peerIdHost = peerIdHost;
     this.peerIdSelf = this.peerIdHost;
 
     this.websocketService.connect(environment.urlSignalingServer).then(() => {
@@ -57,6 +58,22 @@ export class NetworkService {
           break;
       }
     });
+  }
+
+  prepareIds(): { sessionId: string, peerIdHost: string } {
+    let sessionId = localStorage.getItem('sessionId');
+    let peerIdHost = localStorage.getItem('peerIdHost');
+
+    if (!sessionId) {
+      sessionId = generateSessionId();
+      localStorage.setItem('sessionId', sessionId);
+    }
+
+    if (!peerIdHost) {
+      peerIdHost = generateSessionId();
+      localStorage.setItem('peerIdHost', peerIdHost);
+    }
+    return { sessionId, peerIdHost };
   }
 
   async initController(sessionId: string): Promise<void> {
