@@ -50,7 +50,7 @@ export class SquareComponent {
   }
 
   decode(data: string) {
-    // Example: `.;fimqmkrvj;#112233;10;10;1`
+    // Example: `.;{clientId};#112233;10;10;1`
     const parts = data.split(';');
     if (parts.length === 6) {
       if (this.networkService.role === 'Host' && this.clientName !== parts[1]) {

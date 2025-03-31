@@ -9,7 +9,6 @@ import { WebRTCService } from '../../services/web-rtc.service';
   selector: 'app-traffic-send',
   imports: [CommonModule, FormsModule],
   templateUrl: './traffic-send.component.html',
-  styleUrl: './traffic-send.component.scss'
 })
 export class TrafficSendComponent {
   peerId: string = "";

@@ -8,7 +8,6 @@ import { WebRTCService } from '../../services/web-rtc.service';
   selector: 'app-traffic-receive',
   imports: [CommonModule],
   templateUrl: './traffic-receive.component.html',
-  styleUrl: './traffic-receive.component.scss'
 })
 export class TrafficReceiveComponent {
   dataReceivedLast10s: Map<string, number> = new Map();
