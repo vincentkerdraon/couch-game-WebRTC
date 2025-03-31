@@ -43,9 +43,11 @@ export class SquareComponent {
       }
       this.color = parts[2];
       const screenWidth = window.innerWidth;
-      this.position.x = Math.min(this.position.x + parseInt(parts[3]), screenWidth);
+      this.position.x = Math.min(this.position.x + parseInt(parts[3]), screenWidth - 120);
+      this.position.x = Math.max(this.position.x, 0);
       const screenHeight = window.innerHeight;
-      this.position.y = Math.min(this.position.y + parseInt(parts[4]), screenHeight);
+      this.position.y = Math.min(this.position.y + parseInt(parts[4]), screenHeight - 100);
+      this.position.y = Math.max(this.position.y, 0);
       this.visible = parts[5] === '1';
     }
   }

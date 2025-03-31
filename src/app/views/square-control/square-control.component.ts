@@ -18,41 +18,77 @@ export class SquareControlComponent {
   @Input() peerIdTo: string = 'Client Name';
   color: string = '#3498db';
   visible: boolean = false;
+  data: string = '';
 
-  private joystickActive = false;
-  private lastMousePosition: { x: number; y: number } | null = null;
+  joystickActive = false;
+  joystickCenter = { x: 50, y: 50 }; // Center of the joystick (relative to its container)
+  joystickHandleStyle = { left: '50%', top: '50%' }; // Initial position of the joystick handle
 
-  constructor(private webrtcService: WebRTCService, private webRTCControllerService: WebRTCControllerService, private webRTCHostService: WebRTCHostService, private networkService: NetworkService) { }
+  constructor(
+    private webrtcService: WebRTCService,
+    private webRTCControllerService: WebRTCControllerService,
+    private webRTCHostService: WebRTCHostService,
+    private networkService: NetworkService
+  ) { }
 
-  startJoystick(event: MouseEvent): void {
+  startJoystick(event: MouseEvent | TouchEvent): void {
     this.joystickActive = true;
-    this.lastMousePosition = { x: event.clientX, y: event.clientY };
+    event.preventDefault();
   }
 
   stopJoystick(): void {
     this.joystickActive = false;
-    this.lastMousePosition = null;
+    this.joystickHandleStyle = { left: '50%', top: '50%' }; // Reset handle to center
+    this.update(0, 0); // Stop movement
   }
 
-  moveJoystick(event: MouseEvent): void {
-    if (!this.joystickActive || !this.lastMousePosition) {
+  moveJoystick(event: MouseEvent | TouchEvent): void {
+    if (!this.joystickActive) {
       return;
     }
 
-    const dx = event.clientX - this.lastMousePosition.x;
-    const dy = event.clientY - this.lastMousePosition.y;
-    this.update(dx, dy);
-    this.lastMousePosition = { x: event.clientX, y: event.clientY };
+    const container = (event.target as HTMLElement).closest('.joystick') as HTMLElement;
+    const rect = container.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    let clientX: number, clientY: number;
+    if (event instanceof MouseEvent) {
+      clientX = event.clientX;
+      clientY = event.clientY;
+    } else if (event instanceof TouchEvent) {
+      clientX = event.touches[0].clientX;
+      clientY = event.touches[0].clientY;
+    } else {
+      return;
+    }
+
+    const dx = clientX - centerX;
+    const dy = clientY - centerY;
+
+    // Limit the joystick handle movement to the joystick's radius
+    const distance = Math.min(Math.sqrt(dx * dx + dy * dy), rect.width / 2);
+    const angle = Math.atan2(dy, dx);
+
+    const limitedX = Math.cos(angle) * distance;
+    const limitedY = Math.sin(angle) * distance;
+
+    this.joystickHandleStyle = {
+      left: `${50 + (limitedX / rect.width) * 100}%`,
+      top: `${50 + (limitedY / rect.height) * 100}%`
+    };
+
+    // Emit movement data
+    this.update(Math.round(limitedX), Math.round(limitedY));
   }
 
   update(dx: number, dy: number): void {
-    const data = `.;${this.peerIdSelf};${this.color};${dx};${dy};${this.visible ? '1' : '0'}`;
+    this.data = `.;${this.peerIdSelf};${this.color};${dx};${dy};${this.visible ? '1' : '0'}`;
 
     if (this.networkService.role === 'Host') {
-      this.webRTCHostService.sendMessage(this.peerIdTo, data);
-    } else {
-      this.webRTCControllerService.sendMessage(data);
+      this.webRTCHostService.sendMessage(this.peerIdTo, this.data);
+    } else if (this.networkService.role === 'Controller') {
+      this.webRTCControllerService.sendMessage(this.data);
     }
   }
-
 }
