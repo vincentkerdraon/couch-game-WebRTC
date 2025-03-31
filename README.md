@@ -72,3 +72,14 @@ Use `chrome://webrtc-internals/` to debug WebRTC connections.
 ## License
 
 This project is licensed under the MIT License.
+
+## TODO
+
+- try again https://angular.dev/guide/ssr
+    - rename server.ts -> server-ssr.ts (...)
+    - 20250331: Angular: 19.2.4, Angular CLI: 19.2.5, Node: 23.10.0.
+```
+⠧ Building...
+fatal error: all goroutines are asleep - deadlock!
+[1]    349937 segmentation fault (core dumped)  ng build --configuration production --verbose
+```
