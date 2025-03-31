@@ -6,6 +6,9 @@ import { WebRTCControllerService } from '../../services/web-rtc-controller.servi
 import { WebRTCHostService } from '../../services/web-rtc-host.service';
 import { WebRTCService } from '../../services/web-rtc.service';
 
+
+const updateIntervalMs: number = 5;
+
 @Component({
   selector: 'app-square-control',
   templateUrl: './square-control.component.html',
@@ -46,7 +49,7 @@ export class SquareControlComponent implements OnDestroy {
         if (this.joystickActive) {
           this.update(this.lastDx, this.lastDy);
         }
-      }, 10);
+      }, updateIntervalMs);
     }
   }
 
@@ -99,22 +102,32 @@ export class SquareControlComponent implements OnDestroy {
     };
 
     // Update the last movement values
-    this.lastDx = Math.round(limitedX) / 10;
-    this.lastDy = Math.round(limitedY) / 10;
+    this.lastDx = Math.round(limitedX / 10);
+    this.lastDy = Math.round(limitedY / 10);
+
 
     // Emit movement data
     this.update(this.lastDx, this.lastDy);
   }
 
-  update(dx: number, dy: number): void {
-    this.cdr.detectChanges();
-    this.data = `.;${this.peerIdSelf};${this.color};${dx};${dy};${this.visible ? '1' : '0'}`;
+  private updateTimeout: any = null;
 
-    if (this.networkService.role === 'Host') {
-      this.webRTCHostService.sendMessage(this.peerIdTo, this.data);
-    } else if (this.networkService.role === 'Controller') {
-      this.webRTCControllerService.sendMessage(this.data);
+  update(dx: number, dy: number): void {
+    if (this.updateTimeout) {
+      return;
     }
+    this.updateTimeout = setTimeout(() => {
+      this.cdr.detectChanges();
+      this.data = `.;${this.peerIdSelf};${this.color};${dx};${dy};${this.visible ? '1' : '0'}`;
+
+      if (this.networkService.role === 'Host') {
+        this.webRTCHostService.sendMessage(this.peerIdTo, this.data);
+      } else if (this.networkService.role === 'Controller') {
+        this.webRTCControllerService.sendMessage(this.data);
+      }
+
+      this.updateTimeout = null;
+    }, updateIntervalMs);
   }
 
   ngOnDestroy(): void {
