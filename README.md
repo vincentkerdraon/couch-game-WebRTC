@@ -13,6 +13,7 @@ CouchGameWebRTC is a multiplayer application that uses **WebRTC** for real-time 
 - **Session Persistence**: Host remembers the session using local storage for easy reuse.
 - **QR Code Support**: Host presents a QR code for the controller URL.
 - **Screen Wake Lock**: Uses wake lock when possible to prevent the screensaver.
+- **Server Side Rendering**: For improved performance and SEO.
 
 ![Controller Screenshot](doc/screencapture-controller.png)  
 ![Host Screenshot](doc/screencapture-host.png)
@@ -38,6 +39,11 @@ ng build --configuration production
 
 ## Run Locally
 
+0. **Install Dependencies**  
+    ```bash
+    npm install
+    ```
+
 1. **Start the Signaling Server**  
     ```bash
     node server-signaling.js
@@ -46,10 +52,15 @@ ng build --configuration production
 2. **Verify Signaling Server Port**  
     Ensure the signaling server port is correctly configured in `src/environments/environment.ts`.
 
-3. **Run the Angular Application**  
+3. **Run the Angular Application (no SSR)**  
     Start the Angular app, making it accessible to any device on the network:  
     ```bash
-    ng serve --host 0.0.0.0 --disable-host-check
+    ng serve --host 0.0.0.0 --disable-host-check --port 4200
+    ```
+4. **Run the Angular Application (with SSR)**  
+    Start the Angular app with server-side rendering, making it accessible to any device on the network and specifying a port:  
+    ```bash
+    npm run serve:ssr:couch-game-WebRTC --host 0.0.0.0 --disable-host-check --port 4200
     ```
 
 ## Debugging
@@ -74,14 +85,3 @@ Use `chrome://webrtc-internals/` to debug WebRTC connections.
 ## License
 
 This project is licensed under the MIT License.
-
-## TODO
-
-- try again https://angular.dev/guide/ssr
-    - rename server.ts -> server-ssr.ts (...)
-    - 20250331: Angular: 19.2.4, Angular CLI: 19.2.5, Node: 23.10.0.
-```
-⠧ Building...
-fatal error: all goroutines are asleep - deadlock!
-[1]    349937 segmentation fault (core dumped)  ng build --configuration production --verbose
-```
