@@ -31,6 +31,15 @@ CouchGameWebRTC is a multiplayer application that uses **WebRTC** for real-time 
 2. Connect controllers (e.g., phones or computers) to the host.
 3. Interact with the application in real-time.
 
+## Recommended Test
+
+- Display the host on a TV or projector.
+- Connect multiple controllers to the host (using QR code)
+- Use the "square" movement to evaluate latency.
+- Send traffic to test performance limits (e.g., 1000 bits x 100 messages/s should be sufficient).
+- Continue using the "square" movement.
+- Disconnect from the internet to verify that communication is strictly local.
+
 ## Build
 
 ```bash
@@ -71,6 +80,10 @@ Use `chrome://webrtc-internals/` to debug WebRTC connections.
 
 ### 20250331 v0.1.0 
 
+Note: This version is not optimized. For production, there is room for improvements.  
+
+Note: Latency displayed by the application is the round trip: {Controller → Host → Controller}. If the goal is to send movement instructions, only {Controller → Host} is needed.
+
 | Wi-Fi  | Host         | Controller 1     | Controller 1 Bits/Message | Controller 1 Messages/s | Controller 2     | Controller 2 Bits/Message | Controller 2 Messages/s | Controller 3     | Controller 3 Bits/Message | Controller 3 Messages/s | Observation                                                                 |
 |--------|--------------|------------------|---------------------------|-------------------------|------------------|---------------------------|-------------------------|------------------|---------------------------|-------------------------|--------------------------------------------------------------------------------|
 | 1104   | Fire TV Silk | Phone           | 0                         | 0                       | Computer         | 0                         | 0                       | Computer         | 0                         | 0                       | Square movement fluid. Latency around 5ms-20ms.                                 |
@@ -81,6 +94,8 @@ Use `chrome://webrtc-internals/` to debug WebRTC connections.
 | 1104   | Fire TV Silk | Phone           | 100000                    | 100                     | Computer         | 100000                    | 100                     | Computer         | 100000                    | 100                     | Overloaded. Latency around 5s-20s. Max=3x1Mb/s.                                  |
 | 1104   | Fire TV Silk | Phone           | 1000                      | 1000                    | Computer         | 1000                      | 1000                    | Computer         | 1000                      | 1000                    | Square movement fluid. Latency around 10ms-40ms. TV blocked at 3x268kb/s when expecting 3x1Mb/s. |
 | 1104   | Fire TV Silk | Phone           | 1000                      | 10000                   | Computer         | 1000                      | 10000                   | Computer         | 1000                      | 10000                   | Square movement fluid. Latency around 10ms-40ms. Max messages lost. Two controllers on PC crash after 1 min (probably RTC queue full). |
+
+
 
 ## License
 
