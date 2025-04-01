@@ -34,9 +34,10 @@ CouchGameWebRTC is a multiplayer application that uses **WebRTC** for real-time 
 ## Recommended Test
 
 - Display the host on a TV or projector.
+    - The signaling server should be connected and you should see a join link + QR code.
 - Connect multiple controllers to the host (using QR code)
 - Use the "square" movement to evaluate latency.
-- Send traffic to test performance limits (e.g., 1000 bits x 100 messages/s should be sufficient).
+- Send traffic to test performance limits (e.g., 1000 Chars x 100 messages/s should be sufficient).
 - Continue using the "square" movement.
 - Disconnect from the internet to verify that communication is strictly local.
 
@@ -84,7 +85,8 @@ Note: This version is not optimized. For production, there is room for improveme
 
 Note: Latency displayed by the application is the round trip: {Controller → Host → Controller}. If the goal is to send movement instructions, only {Controller → Host} is needed.
 
-| Wi-Fi  | Host         | Controller 1     | Controller 1 Bits/Message | Controller 1 Messages/s | Controller 2     | Controller 2 Bits/Message | Controller 2 Messages/s | Controller 3     | Controller 3 Bits/Message | Controller 3 Messages/s | Observation                                                                 |
+
+| Wi-Fi  | Host         | Controller 1     | Controller 1 Chars/Message | Controller 1 Messages/s | Controller 2     | Controller 2 Chars/Message | Controller 2 Messages/s | Controller 3     | Controller 3 Chars/Message | Controller 3 Messages/s | Observation                                                                 |
 |--------|--------------|------------------|---------------------------|-------------------------|------------------|---------------------------|-------------------------|------------------|---------------------------|-------------------------|--------------------------------------------------------------------------------|
 | 1104   | Fire TV Silk | Phone           | 0                         | 0                       | Computer         | 0                         | 0                       | Computer         | 0                         | 0                       | Square movement fluid. Latency around 5ms-20ms.                                 |
 | 1104   | Fire TV Silk | Phone           | 1000                      | 100                     | Computer         | 1000                      | 100                     | Computer         | 1000                      | 100                     | Square movement fluid. Latency around 5ms-20ms.                                 |
@@ -95,7 +97,9 @@ Note: Latency displayed by the application is the round trip: {Controller → Ho
 | 1104   | Fire TV Silk | Phone           | 1000                      | 1000                    | Computer         | 1000                      | 1000                    | Computer         | 1000                      | 1000                    | Square movement fluid. Latency around 10ms-40ms. TV blocked at 3x268kb/s when expecting 3x1Mb/s. |
 | 1104   | Fire TV Silk | Phone           | 1000                      | 10000                   | Computer         | 1000                      | 10000                   | Computer         | 1000                      | 10000                   | Square movement fluid. Latency around 10ms-40ms. Max messages lost. Two controllers on PC crash after 1 min (probably RTC queue full). |
 
+Also tested with 20 controllers at once.
 
+Latency when connected through internet: 300ms-500ms
 
 ## License
 

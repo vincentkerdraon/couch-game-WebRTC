@@ -12,7 +12,7 @@ import { WebRTCService } from '../../services/web-rtc.service';
 })
 export class TrafficSendComponent {
   peerId: string = "";
-  bitsPerMessage: number = 1000;
+  charsPerMessage: number = 1000;
   messagesPerSecond: number = 10;
   activated: boolean = false;
   private intervalId: any;
@@ -57,10 +57,10 @@ export class TrafficSendComponent {
     clearInterval(this.intervalId);
     if (!this.activated) return;
     if (this.peerId === "") return;
-    if (this.bitsPerMessage <= 0) return;
+    if (this.charsPerMessage <= 0) return;
     if (this.messagesPerSecond <= 0) return;
     this.intervalId = setInterval(() => {
-      const msg = '.'.repeat(this.bitsPerMessage);
+      const msg = '.'.repeat(this.charsPerMessage);
       this.networkService.sendMessage(this.peerId, false, msg);
     }, 1000 / this.messagesPerSecond);
   }
