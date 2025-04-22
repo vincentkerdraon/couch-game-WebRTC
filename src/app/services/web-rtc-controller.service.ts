@@ -9,12 +9,21 @@ import { WebRTCService } from './web-rtc.service';
 export class WebRTCControllerService {
   private peerConnection: RTCPeerConnection | null = null;
   private dataChannel: RTCDataChannel | null = null;
+  public localStream: MediaStream | null = null;
 
   constructor(private webRTCService: WebRTCService, public notificationService: NotificationService) { }
 
-  initialize(iceCandidateCallback: (candidate: RTCIceCandidate) => void): void {
+  async initialize(iceCandidateCallback: (candidate: RTCIceCandidate) => void): Promise<void> {
     console.log('Initializing WebRTCControllerService');
+    const stream = await this.webRTCService.getUserMedia();
+    this.localStream = stream;
     this.peerConnection = this.webRTCService.createPeerConnection(iceCandidateCallback);
+    // Always set ontrack handler
+    this.peerConnection.ontrack = (event) => {
+      if (event.streams && event.streams[0]) {
+        this.webRTCService.remoteStream$.next(event.streams[0]);
+      }
+    };
     this.peerConnection.oniceconnectionstatechange = () => {
       console.log(`ICE connection state: ${this.peerConnection?.iceConnectionState}`);
       const status: ConnectionStatus = this.peerConnection?.iceConnectionState as ConnectionStatus;

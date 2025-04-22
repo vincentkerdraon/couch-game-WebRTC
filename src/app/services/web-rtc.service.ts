@@ -14,22 +14,49 @@ export class WebRTCService {
   public connectionStatuses$: Subject<ConnectionStatuses> = new Subject<ConnectionStatuses>();
   public statuses: ConnectionStatuses[] = [];
 
+  // Video stream support
+  public localStream: MediaStream | null = null;
+  public remoteStream$: Subject<MediaStream> = new Subject<MediaStream>();
 
   constructor(public notificationService: NotificationService) { }
 
-  createPeerConnection(iceCb: (candidate: RTCIceCandidate) => void): RTCPeerConnection {
+  async getUserMedia(constraints: MediaStreamConstraints = { video: true, audio: true }): Promise<MediaStream> {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      this.localStream = stream;
+      return stream;
+    } catch (err) {
+      this.notificationService.showMessage('danger', 'Could not access camera/microphone: ' + err);
+      throw err;
+    }
+  }
+
+  createPeerConnection(iceCb: (candidate: RTCIceCandidate) => void, onTrackCb?: (event: RTCTrackEvent) => void): RTCPeerConnection {
     console.log('createPeerConnection');
 
     const peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
     peerConnection.onicecandidate = (event) => {
       if (!event.candidate) {
-        // Null candidate indicates ICE gathering is complete
         return;
       }
-      // console.log('ICE candidate generated:', event.candidate);
       iceCb(event.candidate);
     };
-
+    if (onTrackCb) {
+      peerConnection.ontrack = onTrackCb;
+    } else {
+      peerConnection.ontrack = (event) => {
+        // Default: emit remote stream
+        if (event.streams && event.streams[0]) {
+          this.remoteStream$.next(event.streams[0]);
+        }
+      };
+    }
+    // Add local tracks if available
+    if (this.localStream) {
+      this.localStream.getTracks().forEach(track => {
+        peerConnection.addTrack(track, this.localStream!);
+      });
+    }
     return peerConnection;
   }
 

@@ -33,7 +33,7 @@ export class NetworkService {
       this.websocketService.sendMessage(initMessage);
     });
 
-    this.websocketService.onMessage((message) => {
+    this.websocketService.onMessage(async (message) => {
       if (this.role !== role || message.type !== 'WebRPC' || !message.content) {
         throw Error('Invalid message');
       }
@@ -42,7 +42,7 @@ export class NetworkService {
           if (!message.content.sdp) {
             throw Error('Invalid offer');
           }
-          this.webRTCHostService.initializeConnection(message.peerIdFrom, (peerId, candidate) => {
+          await this.webRTCHostService.initializeConnection(message.peerIdFrom, (peerId, candidate) => {
             this.sendIceCandidate(peerId, candidate);
           });
           this.webRTCHostService.createAnswer(message.peerIdFrom, message.content.sdp).then((answer) => {
@@ -84,7 +84,7 @@ export class NetworkService {
 
     await this.websocketService.connect(environment.urlSignalingServer);
 
-    this.webRTCControllerService.initialize((candidate) => {
+    await this.webRTCControllerService.initialize((candidate) => {
       const sysMessage: SyncMessage = {
         type: 'WebRPC',
         role: role,

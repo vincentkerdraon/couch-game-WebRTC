@@ -66,6 +66,18 @@
             </div>
         </div>
 
+        <div class="card shadow-sm p-4 mt-4">
+            <div class="mb-3 d-flex flex-row gap-3">
+                <div>
+                    <label>Local Video</label><br />
+                    <video #localVideo width="200" height="150" autoplay muted playsinline></video>
+                </div>
+                <div>
+                    <label>Remote Video</label><br />
+                    <video #remoteVideo width="200" height="150" autoplay playsinline></video>
+                </div>
+            </div>
+        </div>
 
         <div class="card shadow-sm p-4 mt-4">
             <app-square-control [peerIdSelf]="networkService.peerIdSelf"

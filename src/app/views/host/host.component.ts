@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -19,7 +19,7 @@ import { TrafficSendComponent } from "../traffic-send/traffic-send.component";
   imports: [CommonModule, FormsModule, TrafficReceiveComponent, TrafficSendComponent, QRCodeWrapperComponent, SquareComponent, SquareControlComponent],
   templateUrl: './host.component.html',
 })
-export class HostComponent implements OnInit, OnDestroy {
+export class HostComponent implements OnInit, OnDestroy, AfterViewInit {
   peerId: string = '';
   message: string = '';
   sessionId: string = '';
@@ -28,6 +28,12 @@ export class HostComponent implements OnInit, OnDestroy {
   private subscriptionMessages: Subscription;
   qrCodeUrl: string = ''
   urlSignalingServer: string = environment.urlSignalingServer;
+  public localStream: MediaStream | null = null;
+  public remoteStream: MediaStream | null = null;
+  private subscriptionRemoteStream: Subscription;
+
+  @ViewChild('localVideo') localVideoRef!: ElementRef<HTMLVideoElement>;
+  @ViewChild('remoteVideo') remoteVideoRef!: ElementRef<HTMLVideoElement>;
 
   constructor(public networkService: NetworkService, public webrtcService: WebRTCService, private cdr: ChangeDetectorRef, public websocketService: WebSocketService, private notificationService: NotificationService, private wakeLockService: WakeLockService) {
     this.networkService.initHost();
@@ -41,18 +47,46 @@ export class HostComponent implements OnInit, OnDestroy {
         this.lastMessage = trafficData.content;
       }
     });
+
+    this.subscriptionRemoteStream = this.webrtcService.remoteStream$.subscribe((stream) => {
+      this.remoteStream = stream;
+      this.cdr.detectChanges();
+    });
+    this.webrtcService.getUserMedia().then((stream) => {
+      this.localStream = stream;
+      this.cdr.detectChanges();
+    });
   }
 
   ngOnInit(): void {
     this.wakeLockService.requestWakeLock();
   }
 
-  ngOnDestroy() {
-    this.subscriptionMessages.unsubscribe();
-    this.wakeLockService.releaseWakeLock();
+  ngAfterViewInit(): void {
+    if (this.localStream && this.localVideoRef) {
+      this.localVideoRef.nativeElement.srcObject = this.localStream;
+    }
+    if (this.remoteStream && this.remoteVideoRef) {
+      this.remoteVideoRef.nativeElement.srcObject = this.remoteStream;
+    }
+    // Subscribe to stream changes
+    this.webrtcService.remoteStream$.subscribe((stream) => {
+      if (this.remoteVideoRef) {
+        this.remoteVideoRef.nativeElement.srcObject = stream;
+      }
+    });
+    this.webrtcService.getUserMedia().then((stream) => {
+      if (this.localVideoRef) {
+        this.localVideoRef.nativeElement.srcObject = stream;
+      }
+    });
   }
 
-
+  ngOnDestroy() {
+    this.subscriptionMessages.unsubscribe();
+    this.subscriptionRemoteStream.unsubscribe();
+    this.wakeLockService.releaseWakeLock();
+  }
 
   sendMessage(peerId: string): void {
     this.networkService.sendMessageToController(peerId, true, this.message);
