@@ -41,10 +41,23 @@ CouchGameWebRTC is a multiplayer application that uses **WebRTC** for real-time 
 - Continue using the "square" movement.
 - Disconnect from the internet to verify that communication is strictly local.
 
-## Build
+## Build for prod
+
+change in index.html //FIXME base-href not working in build cmd?
+```html
+  <base href="/couchwebrtc/">
+```
+change in server,ts
+```ts
+const path1 = '/couchwebrtc';
+// const path1 = '';
+const path2 = '/couchwebrtc/*';
+// const path2 = '/**'
+```
 
 ```bash
-ng build --configuration production
+rm -rf dist/
+ng build --configuration production --base-href /couchwebrtc/
 ```
 
 ## Run Locally
