@@ -28,8 +28,14 @@ const angularApp = new AngularNodeAppEngine();
 
 /**
  * Serve static files from /browser
+ * //FIXME make this dynamic, in local, only '/'
+ * //can we get the param from --base-href /couchwebrtc/ ??
  */
-app.use(
+
+const path1 = '/couchwebrtc';
+// const path1 = '';
+
+app.use(path1,
   express.static(browserDistFolder, {
     maxAge: '1y',
     index: false,
@@ -37,10 +43,10 @@ app.use(
   }),
 );
 
-/**
- * Handle all other requests by rendering the Angular application.
- */
-app.use('/**', (req, res, next) => {
+// SSR fallback for all routes
+// const path2 = '/couchwebrtc/';
+const path2 = '/^\/couchwebrtc(\/.*)?$/';
+app.use(path1, (req, res, next) => {
   angularApp
     .handle(req)
     .then((response) =>
@@ -48,6 +54,16 @@ app.use('/**', (req, res, next) => {
     )
     .catch(next);
 });
+// const path3 = '/couchwebrtc/*';
+// // const path2 = '/**'
+// app.use(path3, (req, res, next) => {
+//   angularApp
+//     .handle(req)
+//     .then((response) =>
+//       response ? writeResponseToNodeResponse(response, res) : next(),
+//     )
+//     .catch(next);
+// });
 
 /**
  * Start the server if this module is the main entry point.
