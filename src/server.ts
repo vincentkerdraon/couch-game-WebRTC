@@ -1,3 +1,4 @@
+import { APP_BASE_HREF } from '@angular/common';
 import {
   AngularNodeAppEngine,
   createNodeRequestHandler,
@@ -14,28 +15,14 @@ const browserDistFolder = resolve(serverDistFolder, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
-/**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/**', (req, res) => {
- *   // Handle API request
- * });
- * ```
- */
+const BASE_PATH = process.env['BASE_PATH'] || '/';
 
 /**
  * Serve static files from /browser
- * //FIXME make this dynamic, in local, only '/'
- * //can we get the param from --base-href /couchwebrtc/ ??
  */
 
-const path1 = '/couchwebrtc';
-// const path1 = '';
-
-app.use(path1,
+app.use(
+  BASE_PATH,
   express.static(browserDistFolder, {
     maxAge: '1y',
     index: false,
@@ -43,27 +30,19 @@ app.use(path1,
   }),
 );
 
-// SSR fallback for all routes
-// const path2 = '/couchwebrtc/';
-const path2 = '/^\/couchwebrtc(\/.*)?$/';
-app.use(path1, (req, res, next) => {
+// Universal SSR handler with dynamic base href
+app.get('*', (req, res, next) => {
   angularApp
-    .handle(req)
+    .handle(req, {
+      providers: [
+        { provide: APP_BASE_HREF, useValue: req.baseUrl }
+      ]
+    })
     .then((response) =>
       response ? writeResponseToNodeResponse(response, res) : next(),
     )
     .catch(next);
 });
-// const path3 = '/couchwebrtc/*';
-// // const path2 = '/**'
-// app.use(path3, (req, res, next) => {
-//   angularApp
-//     .handle(req)
-//     .then((response) =>
-//       response ? writeResponseToNodeResponse(response, res) : next(),
-//     )
-//     .catch(next);
-// });
 
 /**
  * Start the server if this module is the main entry point.
@@ -72,7 +51,7 @@ app.use(path1, (req, res, next) => {
 if (isMainModule(import.meta.url)) {
   const port = process.env['PORT'] || 4000;
   app.listen(port, () => {
-    console.log(`Node Express server listening on http://localhost:${port}`);
+    console.log(`Node Express server listening on http://localhost:${port} BASE_PATH=${BASE_PATH}`);
   });
 }
 
