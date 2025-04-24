@@ -43,22 +43,16 @@ CouchGameWebRTC is a multiplayer application that uses **WebRTC** for real-time 
 
 ## Build for prod
 
-change in index.html //FIXME base-href not working in build cmd?
-```html
-  <base href="/couchwebrtc/">
-```
-change in server,ts
-```ts
-const path1 = '/couchwebrtc';
-// const path1 = '';
-const path2 = '/couchwebrtc/*';
-// const path2 = '/**'
+```bash
+rm -rf dist/ 
+ng build --configuration production --base-href /couchwebrtc/
 ```
 
 ```bash
-rm -rf dist/
-ng build --configuration production --base-href /couchwebrtc/
+# $BASE_PATH must be defined for SSR
+docker run --rm  -p 8020:4000 -e "BASE_PATH=/couchwebrtc/" -v /var/www/couch-game-web-rtc-ssr:/usr/src/app     -w /usr/src/app     --name node-couch-game-web-rtc-ssr     node:alpine     ash -c "node server/server.m.mjs"
 ```
+
 
 ## Run Locally
 
