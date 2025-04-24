@@ -1,0 +1,38 @@
+stages:
+  - build-signaling
+  - build-ssr
+
+variables:
+  REGISTRY: $CI_REGISTRY
+  PROJECT_PATH: $CI_PROJECT_PATH
+  DOCKER_DRIVER: overlay2
+
+# --- Signaling Server Image ---
+build_signaling:
+  stage: build-signaling
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $REGISTRY/$PROJECT_PATH/couch-web-rtc-signaling:latest -t $REGISTRY/$PROJECT_PATH/couch-web-rtc-signaling:$CI_COMMIT_SHA -f Dockerfile_signaling .
+    - echo $CI_JOB_TOKEN | docker login -u $CI_REGISTRY_USER --password-stdin $REGISTRY
+    - docker push $REGISTRY/$PROJECT_PATH/couch-web-rtc-signaling:latest
+    - docker push $REGISTRY/$PROJECT_PATH/couch-web-rtc-signaling:$CI_COMMIT_SHA
+  only:
+    - main
+
+# --- Angular SSR App Image ---
+build_ssr:
+  stage: build-ssr
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $REGISTRY/$PROJECT_PATH/couch-web-rtc-ssr:latest -t $REGISTRY/$PROJECT_PATH/couch-web-rtc-ssr:$CI_COMMIT_SHA -f Dockerfile .
+    - echo $CI_JOB_TOKEN | docker login -u $CI_REGISTRY_USER --password-stdin $REGISTRY
+    - docker push $REGISTRY/$PROJECT_PATH/couch-web-rtc-ssr:latest
+    - docker push $REGISTRY/$PROJECT_PATH/couch-web-rtc-ssr:$CI_COMMIT_SHA
+  only:
+    - main
+  dependencies:
+    - build_signaling

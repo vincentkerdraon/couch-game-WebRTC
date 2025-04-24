@@ -41,16 +41,19 @@ CouchGameWebRTC is a multiplayer application that uses **WebRTC** for real-time 
 - Continue using the "square" movement.
 - Disconnect from the internet to verify that communication is strictly local.
 
-## Build for prod
+## Build+Run for prod
 
 ```bash
 rm -rf dist/ 
-ng build --configuration production --base-href /couchwebrtc/
+ng build --configuration production --base-href /couch-web-rtc/
 ```
 
 ```bash
-# $BASE_PATH must be defined for SSR
-docker run --rm  -p 8020:4000 -e "BASE_PATH=/couchwebrtc/" -v /var/www/couch-game-web-rtc-ssr:/usr/src/app     -w /usr/src/app     --name node-couch-game-web-rtc-ssr     node:alpine     ash -c "node server/server.m.mjs"
+docker run --restart always -d  \
+    -p 8020:4000 \
+    -e "BASE_PATH=/couch-web-rtc/" \
+    --name couch-web-rtc-ssr \
+    ghcr.io/vincentkerdraon/couch-web-rtc-ssr:latest
 ```
 
 
