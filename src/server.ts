@@ -15,14 +15,14 @@ const browserDistFolder = resolve(serverDistFolder, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
-const BASE_PATH = process.env['BASE_PATH'] || '/';
+const BASE_HREF = process.env['BASE_HREF'] || '/';
 
 /**
  * Serve static files from /browser
  */
 
 app.use(
-  BASE_PATH,
+  BASE_HREF,
   express.static(browserDistFolder, {
     maxAge: '1y',
     index: false,
@@ -51,7 +51,7 @@ app.get('*', (req, res, next) => {
 if (isMainModule(import.meta.url)) {
   const port = process.env['PORT'] || 4000;
   app.listen(port, () => {
-    console.log(`Node Express server listening on http://localhost:${port} BASE_PATH=${BASE_PATH}`);
+    console.log(`Node Express server listening on http://0.0.0.0:${port} BASE_HREF=${BASE_HREF}`);
   });
 }
 
