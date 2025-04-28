@@ -65,6 +65,7 @@ export class HostComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     if (this.localStream && this.localVideoRef) {
       this.localVideoRef.nativeElement.srcObject = this.localStream;
+      this.localVideoRef.nativeElement.muted = true; // Ensure local video is always muted
     }
     if (this.remoteStream && this.remoteVideoRef) {
       this.remoteVideoRef.nativeElement.srcObject = this.remoteStream;
@@ -78,6 +79,7 @@ export class HostComponent implements OnInit, OnDestroy, AfterViewInit {
     this.webrtcService.getUserMedia().then((stream) => {
       if (this.localVideoRef) {
         this.localVideoRef.nativeElement.srcObject = stream;
+        this.localVideoRef.nativeElement.muted = true; // Ensure local video is always muted
       }
     });
   }

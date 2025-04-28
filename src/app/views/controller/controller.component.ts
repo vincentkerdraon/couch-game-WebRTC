@@ -82,6 +82,7 @@ export class ControllerComponent implements OnInit, OnDestroy, AfterViewInit, Af
     // Set local video only if available
     if (this.localStream && this.localVideoRef) {
       this.localVideoRef.nativeElement.srcObject = this.localStream;
+      this.localVideoRef.nativeElement.muted = true; // Ensure local video is always muted
     }
     // Debug: log remoteVideoRef
     console.log('[ControllerComponent] remoteVideoRef:', this.remoteVideoRef);
@@ -101,6 +102,7 @@ export class ControllerComponent implements OnInit, OnDestroy, AfterViewInit, Af
     if (this.localVideoRef && this.latestLocalStream) {
       if (this.localVideoRef.nativeElement.srcObject !== this.latestLocalStream) {
         this.localVideoRef.nativeElement.srcObject = this.latestLocalStream;
+        this.localVideoRef.nativeElement.muted = true; // Ensure local video is always muted
         this.localVideoRef.nativeElement.load();
         setTimeout(() => {
           console.log('[ControllerComponent] localVideoRef videoWidth:', this.localVideoRef.nativeElement.videoWidth, 'videoHeight:', this.localVideoRef.nativeElement.videoHeight);
